@@ -686,9 +686,8 @@ return (
           </Card>
 </div>
       )}
-    </div>
 
-    {/* Edit Modal */}
+      {/* Edit Modal */}
       <Modal
         isOpen={isEditModalOpen}
         onClose={handleCloseModal}
@@ -716,7 +715,7 @@ return (
           onCancel={handleCloseEmployeeModal}
           loading={employeeFormLoading}
         />
-</Modal>
+      </Modal>
 
       {/* VA Assignment Modal */}
       <Modal
