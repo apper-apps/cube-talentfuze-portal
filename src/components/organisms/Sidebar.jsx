@@ -59,7 +59,7 @@ const { user, logout, hasPermission } = useAuth();
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
-      <div className="p-6 border-b border-slate-200 lg:hidden">
+<div className="p-4 sm:p-6 border-b border-slate-200 lg:hidden">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
@@ -86,7 +86,7 @@ const { user, logout, hasPermission } = useAuth();
         <h1 className="ml-3 text-xl font-bold text-gray-900">TalentFuze</h1>
       </div>
 
-<nav className="flex-1 p-4 space-y-2">
+<nav className="flex-1 p-3 sm:p-4 space-y-1 sm:space-y-2">
         {getNavItems(hasPermission, user?.role).map((item) => (
           <NavLink
             key={item.to}
@@ -146,7 +146,7 @@ const { user, logout, hasPermission } = useAuth();
             className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40 lg:hidden"
             onClick={closeMobileSidebar}
           />
-          <div className="fixed left-0 top-0 h-full w-64 bg-white z-50 lg:hidden transform transition-transform duration-300 shadow-2xl flex flex-col">
+<div className="fixed left-0 top-0 h-full w-72 sm:w-64 bg-white z-50 lg:hidden transform transition-transform duration-300 shadow-2xl flex flex-col">
             <SidebarContent />
           </div>
         </>

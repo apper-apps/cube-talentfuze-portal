@@ -69,12 +69,12 @@ const AgencyTable = ({
   if (!agencies.length) return <Empty message="No agencies found" />;
 
   return (
-    <Card>
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-slate-50 border-b border-slate-200">
+<Card>
+      <div className="overflow-x-auto -mx-4 sm:mx-0">
+        <table className="w-full min-w-[640px]">
+          <thead className="bg-slate-50">
             <tr>
-              <th className="text-left p-4">
+              <th className="text-left p-3 sm:p-4 font-semibold text-slate-700 whitespace-nowrap">
                 <button
                   onClick={() => handleSort("name")}
                   className="flex items-center gap-2 font-semibold text-slate-700 hover:text-slate-900"
@@ -83,7 +83,7 @@ const AgencyTable = ({
                   <ApperIcon name={getSortIcon("name")} size={16} />
                 </button>
               </th>
-              <th className="text-left p-4">
+              <th className="text-left p-3 sm:p-4 font-semibold text-slate-700 whitespace-nowrap">
                 <button
                   onClick={() => handleSort("contactName")}
                   className="flex items-center gap-2 font-semibold text-slate-700 hover:text-slate-900"
@@ -92,13 +92,13 @@ const AgencyTable = ({
                   <ApperIcon name={getSortIcon("contactName")} size={16} />
                 </button>
               </th>
-              <th className="text-left p-4 font-semibold text-slate-700">
+              <th className="text-left p-3 sm:p-4 font-semibold text-slate-700 whitespace-nowrap">
                 Contact Email
               </th>
-              <th className="text-left p-4 font-semibold text-slate-700">
+              <th className="text-left p-3 sm:p-4 font-semibold text-slate-700 whitespace-nowrap">
                 Phone
-</th>
-              <th className="text-left p-4">
+              </th>
+              <th className="text-left p-3 sm:p-4 font-semibold text-slate-700 whitespace-nowrap">
                 <button
                   onClick={() => handleSort("status")}
                   className="flex items-center gap-2 font-semibold text-slate-700 hover:text-slate-900"
@@ -107,7 +107,7 @@ const AgencyTable = ({
                   <ApperIcon name={getSortIcon("status")} size={16} />
                 </button>
               </th>
-              <th className="text-right p-4 font-semibold text-slate-700">
+              <th className="text-right p-3 sm:p-4 font-semibold text-slate-700 whitespace-nowrap">
                 Actions
               </th>
             </tr>
@@ -118,34 +118,34 @@ const AgencyTable = ({
                 key={agency.Id} 
                 className="hover:bg-slate-50 transition-colors"
               >
-                <td className="p-4">
+                <td className="p-3 sm:p-4">
                   <div className="font-semibold text-slate-900">
                     {agency.name}
                   </div>
                 </td>
-                <td className="p-4">
+                <td className="p-3 sm:p-4">
                   <div className="text-slate-700">
                     {agency.contactName}
                   </div>
                 </td>
-                <td className="p-4">
+                <td className="p-3 sm:p-4">
                   <div className="text-slate-700">
                     {agency.contactEmail}
                   </div>
                 </td>
-                <td className="p-4">
+                <td className="p-3 sm:p-4">
                   <div className="text-slate-700">
                     {agency.phone}
                   </div>
                 </td>
-                <td className="p-4">
+                <td className="p-3 sm:p-4">
                   <Badge
                     variant={agency.status === "active" ? "success" : "secondary"}
                   >
                     {agency.status === "active" ? "Active" : "Inactive"}
                   </Badge>
                 </td>
-<td className="p-4">
+                <td className="p-3 sm:p-4">
                   <div className="flex items-center justify-end gap-2">
                     <Button
                       variant="secondary"

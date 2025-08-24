@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Chart from "react-apexcharts";
-import { format, subDays, startOfMonth, endOfMonth } from "date-fns";
+import { endOfMonth, format, startOfMonth, subDays } from "date-fns";
 import ApperIcon from "@/components/ApperIcon";
-import Card from "@/components/atoms/Card";
-import Button from "@/components/atoms/Button";
-import Input from "@/components/atoms/Input";
-import Select from "@/components/atoms/Select";
-import Badge from "@/components/atoms/Badge";
+import StatCard from "@/components/molecules/StatCard";
 import Modal from "@/components/molecules/Modal";
 import SearchBar from "@/components/molecules/SearchBar";
-import StatCard from "@/components/molecules/StatCard";
-import Loading from "@/components/ui/Loading";
+import Card from "@/components/atoms/Card";
+import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
+import Badge from "@/components/atoms/Badge";
+import Input from "@/components/atoms/Input";
+import CheckInForm from "@/components/organisms/CheckInForm";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
-import CheckInForm from "@/components/organisms/CheckInForm";
+import Loading from "@/components/ui/Loading";
 import checkInService from "@/services/api/checkInService";
-import virtualAssistantService from "@/services/api/virtualAssistantService";
 import agencyService from "@/services/api/agencyService";
+import virtualAssistantService from "@/services/api/virtualAssistantService";
 const CheckIns = () => {
 const [activeTab, setActiveTab] = useState("checkins");
   const [checkIns, setCheckIns] = useState([]);
@@ -270,7 +270,7 @@ const [activeTab, setActiveTab] = useState("checkins");
   }
 
   return (
-<div className="p-6 max-w-6xl mx-auto">
+<div className="p-4 sm:p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
@@ -302,7 +302,7 @@ const [activeTab, setActiveTab] = useState("checkins");
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex border-b border-slate-200 mb-6">
+<div className="flex overflow-x-auto border-b border-slate-200 mb-4 sm:mb-6 -mx-4 sm:mx-0 px-4 sm:px-0">
         <button
           onClick={() => setActiveTab("checkins")}
           className={`px-6 py-3 font-medium text-sm border-b-2 transition-colors ${
@@ -333,9 +333,9 @@ const [activeTab, setActiveTab] = useState("checkins");
 {/* Tab Content */}
       {activeTab === "checkins" ? (
         <>
-          {/* Filters */}
-          <Card className="p-6 mb-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+{/* Filters */}
+          <Card className="p-4 sm:p-6 mb-4 sm:mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4">
               <div className="lg:col-span-2">
                 <SearchBar
                   value={searchTerm}
@@ -344,33 +344,37 @@ const [activeTab, setActiveTab] = useState("checkins");
                   className="w-full"
                 />
               </div>
-              <Select
-                placeholder="Filter by Virtual Assistant"
-                value={filterVA}
-                onChange={(e) => setFilterVA(e.target.value)}
-                options={virtualAssistants.map(va => ({
-                  value: va.Id.toString(),
-                  label: va.name
-                }))}
-              />
-              <Select
-                placeholder="Filter by Agency"
-                value={filterAgency}
-                onChange={(e) => setFilterAgency(e.target.value)}
-                options={agencies.map(agency => ({
-                  value: agency.Id.toString(),
-                  label: agency.name
-                }))}
-              />
+              <div className="w-full">
+                <Select
+                  placeholder="Filter by Virtual Assistant"
+                  value={filterVA}
+                  onChange={(e) => setFilterVA(e.target.value)}
+                  options={virtualAssistants.map(va => ({
+                    value: va.Id.toString(),
+                    label: va.name
+                  }))}
+                />
+              </div>
+              <div className="w-full">
+                <Select
+                  placeholder="Filter by Agency"
+                  value={filterAgency}
+                  onChange={(e) => setFilterAgency(e.target.value)}
+                  options={agencies.map(agency => ({
+                    value: agency.Id.toString(),
+                    label: agency.name
+                  }))}
+                />
+              </div>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
               <div className="flex items-center gap-4">
                 <Input
                   type="date"
                   placeholder="Filter by date"
                   value={filterDate}
                   onChange={(e) => setFilterDate(e.target.value)}
-                  className="w-auto"
+                  className="w-full sm:w-auto"
                 />
                 {(searchTerm || filterVA || filterAgency || filterDate) && (
                   <Button
@@ -404,8 +408,8 @@ const [activeTab, setActiveTab] = useState("checkins");
           ) : (
             <div className="space-y-4">
               {filteredCheckIns.map((checkIn) => (
-                <Card key={checkIn.Id} className="p-6 hover:shadow-xl transition-all duration-200">
-                  <div className="flex items-start justify-between mb-4">
+<Card key={checkIn.Id} className="p-4 sm:p-6 hover:shadow-xl transition-all duration-200">
+<div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4 mb-4">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
                         <ApperIcon name="User" size={20} className="text-white" />
@@ -494,26 +498,28 @@ const [activeTab, setActiveTab] = useState("checkins");
           {/* Analytics Tab */}
           {/* Date Range Filters */}
           <Card className="p-6 mb-6">
-            <div className="flex flex-col md:flex-row md:items-center gap-4">
-              <div className="flex items-center gap-4 flex-1">
+<div className="flex flex-col gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                 <div className="flex items-center gap-2">
                   <label className="text-sm font-medium text-slate-700">From:</label>
-                  <Input
+<Input
                     type="date"
                     value={dateRange.startDate}
                     onChange={(e) => handleDateRangeChange('startDate', e.target.value)}
-                    className="w-auto"
+                    className="w-full sm:w-auto"
                   />
                 </div>
-                <div className="flex items-center gap-2">
-                  <label className="text-sm font-medium text-slate-700">To:</label>
+<div className="flex items-center gap-2">
+                  <label className="text-sm font-medium text-slate-700 whitespace-nowrap">To:</label>
                   <Input
                     type="date"
                     value={dateRange.endDate}
-                    onChange={(e) => handleDateRangeChange('endDate', e.target.value)}
-                    className="w-auto"
+onChange={(e) => handleDateRangeChange('endDate', e.target.value)}
+                    className="w-full sm:w-auto"
                   />
                 </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <Select
                   placeholder="Filter by Virtual Assistant"
                   value={filterVA}
@@ -522,9 +528,9 @@ const [activeTab, setActiveTab] = useState("checkins");
                     value: va.Id.toString(),
                     label: va.name
                   }))}
-                  className="min-w-[200px]"
+                  className="w-full sm:min-w-[200px]"
                 />
-                <Select
+<Select
                   placeholder="Filter by Agency"
                   value={filterAgency}
                   onChange={(e) => setFilterAgency(e.target.value)}
@@ -532,7 +538,7 @@ const [activeTab, setActiveTab] = useState("checkins");
                     value: agency.Id.toString(),
                     label: agency.name
                   }))}
-                  className="min-w-[200px]"
+                  className="w-full sm:min-w-[200px]"
                 />
               </div>
             </div>

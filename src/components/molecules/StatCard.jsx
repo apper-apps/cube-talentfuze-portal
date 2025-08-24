@@ -12,8 +12,8 @@ const StatCard = ({
 }) => {
   return (
     <Card className={cn("p-6", className)} hover>
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
+<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+<div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-slate-600 uppercase tracking-wide">
             {title}
           </p>

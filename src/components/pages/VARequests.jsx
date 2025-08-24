@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import ApperIcon from "@/components/ApperIcon";
-import Card from "@/components/atoms/Card";
-import Button from "@/components/atoms/Button";
-import Input from "@/components/atoms/Input";
-import Select from "@/components/atoms/Select";
-import Badge from "@/components/atoms/Badge";
 import Modal from "@/components/molecules/Modal";
 import SearchBar from "@/components/molecules/SearchBar";
-import Loading from "@/components/ui/Loading";
+import Card from "@/components/atoms/Card";
+import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
+import Badge from "@/components/atoms/Badge";
+import Input from "@/components/atoms/Input";
+import VARequestForm from "@/components/organisms/VARequestForm";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
-import VARequestForm from "@/components/organisms/VARequestForm";
-import virtualAssistantService from "@/services/api/virtualAssistantService";
+import Loading from "@/components/ui/Loading";
 import agencyService from "@/services/api/agencyService";
+import virtualAssistantService from "@/services/api/virtualAssistantService";
 
 const VARequests = () => {
   const [requests, setRequests] = useState([]);
@@ -193,9 +193,9 @@ const VARequests = () => {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+<div className="p-4 sm:p-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">VA Requests</h1>
           <p className="text-slate-600 mt-2">
@@ -213,8 +213,8 @@ const VARequests = () => {
 
       {/* Filters */}
       <Card className="p-6 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <div className="md:col-span-1">
+<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-4">
+          <div className="sm:col-span-1 md:col-span-1">
             <SearchBar
               value={searchTerm}
               onChange={setSearchTerm}
@@ -222,13 +222,16 @@ const VARequests = () => {
               className="w-full"
             />
           </div>
-          <Select
+<div className="w-full sm:w-auto">
+            <Select
             placeholder="Filter by Status"
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
             options={statusOptions}
           />
-          <Select
+</div>
+          <div className="w-full sm:w-auto">
+            <Select
             placeholder="Filter by Agency"
             value={filterAgency}
             onChange={(e) => setFilterAgency(e.target.value)}
@@ -236,9 +239,10 @@ const VARequests = () => {
               value: agency.Id.toString(),
               label: agency.name
             }))}
-          />
+/>
         </div>
-        <div className="flex items-center justify-between">
+        </div>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-4">
             {(searchTerm || filterStatus || filterAgency) && (
               <Button
@@ -272,8 +276,8 @@ const VARequests = () => {
       ) : (
         <div className="space-y-4">
           {filteredRequests.map((request) => (
-            <Card key={request.Id} className="p-6 hover:shadow-xl transition-all duration-200">
-              <div className="flex items-start justify-between mb-4">
+<Card key={request.Id} className="p-4 sm:p-6 hover:shadow-xl transition-all duration-200">
+<div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4 mb-4">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
                     <ApperIcon name="Building2" size={20} className="text-white" />
@@ -325,7 +329,7 @@ const VARequests = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-4">
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     Required Skills
@@ -404,7 +408,7 @@ const VARequests = () => {
         </div>
       )}
 
-      {/* Form Modal */}
+{/* Form Modal */}
       <Modal
         isOpen={isFormModalOpen}
         onClose={handleCloseModal}

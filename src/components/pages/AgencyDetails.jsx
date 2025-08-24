@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import checkInService from "@/services/api/checkInService";
 import ApperIcon from "@/components/ApperIcon";
 import Modal from "@/components/molecules/Modal";
 import Card from "@/components/atoms/Card";
@@ -9,10 +8,11 @@ import Select from "@/components/atoms/Select";
 import Button from "@/components/atoms/Button";
 import Badge from "@/components/atoms/Badge";
 import AgencyForm from "@/components/organisms/AgencyForm";
-import InternalEmployeeForm from "@/components/organisms/InternalEmployeeForm";
 import MonthlySummaryForm from "@/components/organisms/MonthlySummaryForm";
+import InternalEmployeeForm from "@/components/organisms/InternalEmployeeForm";
 import Error from "@/components/ui/Error";
 import Loading from "@/components/ui/Loading";
+import checkInService from "@/services/api/checkInService";
 import employeeService from "@/services/api/employeeService";
 import agencyService from "@/services/api/agencyService";
 import virtualAssistantService from "@/services/api/virtualAssistantService";
@@ -336,9 +336,9 @@ const handleBackToList = () => {
   }
 
 return (
-    <div className="p-6 max-w-6xl mx-auto">
+<div className="p-4 sm:p-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
         <div className="flex items-center gap-4">
           <Button
             variant="secondary"
@@ -365,10 +365,10 @@ return (
       {/* Tabs */}
       <div className="mb-8">
         <div className="border-b border-slate-200">
-          <nav className="-mb-px flex space-x-8">
+<nav className="-mb-px flex space-x-4 sm:space-x-8 overflow-x-auto">
             <button
-              onClick={() => setActiveTab('details')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+onClick={() => setActiveTab('details')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
                 activeTab === 'details'
                   ? 'border-primary text-primary'
                   : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
@@ -381,7 +381,7 @@ return (
             </button>
 <button
               onClick={() => setActiveTab('checkins')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              className={`py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
                 activeTab === 'checkins'
                   ? 'border-primary text-primary'
                   : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
@@ -392,10 +392,9 @@ return (
                 Check-ins ({checkIns.length})
               </div>
             </button>
-
-            <button
+<button
               onClick={() => setActiveTab('reports')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              className={`py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
                 activeTab === 'reports'
                   ? 'border-primary text-primary'
                   : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
@@ -538,48 +537,46 @@ return (
               </div>
             ) : (
               <div className="space-y-3">
-                {employees.map((employee) => (
-                  <div
-                    key={employee.Id}
-                    className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
-                        <ApperIcon name="User" size={18} className="text-white" />
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {employees.map((employee) => (
+                    <Card key={employee.Id} className="p-4 sm:p-6">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
+                          <ApperIcon name="User" size={18} className="text-white" />
+                        </div>
+                        <div>
+                          <div className="font-semibold text-slate-900">{employee.name}</div>
+                          <div className="text-sm text-slate-600">{employee.role}</div>
+                          <div className="text-sm text-slate-500">{employee.email}</div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="font-semibold text-slate-900">{employee.name}</div>
-                        <div className="text-sm text-slate-600">{employee.role}</div>
-                        <div className="text-sm text-slate-500">{employee.email}</div>
+                      <div className="flex items-center justify-between">
+                        <Badge variant={getAccessLevelBadgeVariant(employee.accessLevel)}>
+                          {employee.accessLevel.charAt(0).toUpperCase() + employee.accessLevel.slice(1)}
+                        </Badge>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => handleEditEmployee(employee)}
+                            className="p-2"
+                          >
+                            <ApperIcon name="Edit" size={16} />
+                          </Button>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => handleDeleteEmployee(employee)}
+                            className="p-2 hover:bg-red-50 hover:text-red-600"
+                          >
+                            <ApperIcon name="Trash2" size={16} />
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Badge variant={getAccessLevelBadgeVariant(employee.accessLevel)}>
-                        {employee.accessLevel.charAt(0).toUpperCase() + employee.accessLevel.slice(1)}
-                      </Badge>
-                      <div className="flex items-center gap-1">
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => handleEditEmployee(employee)}
-                          className="p-2"
-                        >
-                          <ApperIcon name="Edit" size={16} />
-                        </Button>
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => handleDeleteEmployee(employee)}
-                          className="p-2 hover:bg-red-50 hover:text-red-600"
-                        >
-                          <ApperIcon name="Trash2" size={16} />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                    </Card>
+                  ))}
+                </div>
+              )}
           </Card>
         </div>
 
@@ -625,7 +622,7 @@ return (
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
+<div className="overflow-x-auto -mx-4 sm:mx-0">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-slate-200">
@@ -636,7 +633,7 @@ return (
                     <th className="text-left py-3 px-4 font-semibold text-slate-900">Actions</th>
                   </tr>
                 </thead>
-                <tbody>
+<tbody className="divide-y divide-slate-200">
                   {virtualAssistants.map((va) => (
                     <tr key={va.Id} className="border-b border-slate-100 hover:bg-slate-50">
                       <td className="py-3 px-4">
@@ -657,10 +654,10 @@ return (
                       <td className="py-3 px-4">
                         <Button
                           variant="outline"
-                          size="sm"
-                          onClick={() => handleUnassignVA(va.Id, va.name)}
-                          className="text-error hover:text-error hover:border-error"
-                        >
+size="sm"
+onClick={() => handleUnassignVA(va.Id, va.name)}
+className="text-error hover:text-error hover:border-error"
+>
                           <ApperIcon name="UserMinus" size={14} className="mr-1" />
                           Unassign
                         </Button>
@@ -707,7 +704,7 @@ return (
                       key={checkIn.Id}
                       className="border border-slate-200 rounded-lg p-4 hover:bg-slate-50 transition-colors"
                     >
-                      <div className="flex items-start justify-between mb-3">
+<div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4 mb-3">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
                             <ApperIcon name="User" size={18} className="text-white" />
@@ -773,7 +770,7 @@ return (
       {activeTab === 'reports' && (
         <div className="space-y-6">
           <Card className="p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+<div className="flex flex-col gap-4 mb-6">
               <div>
                 <h3 className="text-lg font-semibold text-slate-900">Monthly Reports</h3>
                 <p className="text-sm text-slate-600 mt-1">
@@ -787,15 +784,17 @@ return (
             </div>
 
             <div className="mb-6">
-              <div className="relative">
-                <ApperIcon name="Search" size={16} className="absolute left-3 top-3 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="Search by reporting period..."
-                  value={summarySearchTerm}
-                  onChange={(e) => setSummarySearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                />
+<div className="flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-1">
+                  <ApperIcon name="Search" size={16} className="absolute left-3 top-3 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Search by reporting period..."
+                    value={summarySearchTerm}
+                    onChange={(e) => setSummarySearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
+                </div>
               </div>
             </div>
 
@@ -825,7 +824,7 @@ return (
                   <div
                     key={summary.Id}
                     className="border border-slate-200 rounded-lg p-6 hover:bg-slate-50 transition-colors"
-                  >
+>
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
@@ -968,34 +967,35 @@ return (
                 Select a virtual assistant to assign to this agency:
               </p>
               <div className="max-h-96 overflow-y-auto space-y-2">
-                {unassignedVAs.map((va) => (
-                  <div
-                    key={va.Id}
-                    className="border border-slate-200 rounded-lg p-4 hover:border-primary hover:bg-blue-50 cursor-pointer transition-colors"
-                    onClick={() => handleVAAssignment(va.Id)}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-medium text-slate-900">{va.name}</div>
-                        <div className="text-sm text-slate-500">{va.email}</div>
-                        <div className="text-sm text-slate-600 mt-1">
-                          Primary Skills: {va.skills?.slice(0, 2).join(", ")}
-                          {va.skills?.length > 2 && ` (+${va.skills.length - 2} more)`}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {unassignedVAs.map((va) => (
+                    <div
+                      key={va.Id}
+                      className="border border-slate-200 rounded-lg p-4 hover:border-primary hover:bg-blue-50 cursor-pointer transition-colors"
+                      onClick={() => handleVAAssignment(va.Id)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-medium text-slate-900">{va.name}</div>
+                          <div className="text-sm text-slate-500">{va.email}</div>
+                          <div className="text-sm text-slate-600 mt-1">
+                            Primary Skills: {va.skills?.slice(0, 2).join(", ")}
+                            {va.skills?.length > 2 && ` (+${va.skills.length - 2} more)`}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={va.status}>{va.status}</Badge>
+                          <ApperIcon name="ChevronRight" size={16} className="text-slate-400" />
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant={va.status}>{va.status}</Badge>
-                        <ApperIcon name="ChevronRight" size={16} className="text-slate-400" />
-                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </>
           )}
         </div>
       </Modal>
-
       {/* Monthly Summary Modal */}
       <Modal
         isOpen={isSummaryModalOpen}

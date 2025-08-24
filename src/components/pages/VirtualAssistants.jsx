@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import VirtualAssistantForm from "@/components/organisms/VirtualAssistantForm";
 import ApperIcon from "@/components/ApperIcon";
 import Modal from "@/components/molecules/Modal";
 import SearchBar from "@/components/molecules/SearchBar";
-import Button from "@/components/atoms/Button";
-import Select from "@/components/atoms/Select";
 import Card from "@/components/atoms/Card";
+import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
 import VirtualAssistantTable from "@/components/organisms/VirtualAssistantTable";
+import VirtualAssistantForm from "@/components/organisms/VirtualAssistantForm";
 import agencyService from "@/services/api/agencyService";
 import virtualAssistantService from "@/services/api/virtualAssistantService";
 const VirtualAssistants = () => {
@@ -113,7 +113,7 @@ useEffect(() => {
     setAssignmentFilter("");
   };
   return (
-    <div className="space-y-6">
+<div className="space-y-4 sm:space-y-6">
       {/* Header */}
 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -128,9 +128,9 @@ useEffect(() => {
 
       {/* Search Bar */}
 {/* Filters */}
-      <Card className="p-6 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-          <div className="lg:col-span-2">
+<Card className="p-6 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4">
+          <div className="sm:col-span-2 lg:col-span-2">
             <SearchBar
               value={searchTerm}
               onChange={setSearchTerm}
@@ -138,27 +138,31 @@ useEffect(() => {
               className="w-full"
             />
           </div>
-          <Select
-            placeholder="Filter by Status"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            options={[
-              { value: "available", label: "Available" },
-              { value: "busy", label: "Busy" },
-              { value: "inactive", label: "Inactive" }
-            ]}
-          />
-          <Select
-            placeholder="Filter by Assignment"
-            value={assignmentFilter}
-            onChange={(e) => setAssignmentFilter(e.target.value)}
-            options={[
-              { value: "assigned", label: "Assigned" },
-              { value: "unassigned", label: "Unassigned" }
-            ]}
-          />
+          <div className="w-full sm:w-auto">
+            <Select
+              placeholder="Filter by Status"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              options={[
+                { value: "available", label: "Available" },
+                { value: "busy", label: "Busy" },
+                { value: "inactive", label: "Inactive" }
+              ]}
+            />
+          </div>
+          <div className="w-full sm:w-auto">
+            <Select
+              placeholder="Filter by Assignment"
+              value={assignmentFilter}
+              onChange={(e) => setAssignmentFilter(e.target.value)}
+              options={[
+                { value: "assigned", label: "Assigned" },
+                { value: "unassigned", label: "Unassigned" }
+              ]}
+            />
+          </div>
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-4">
             {(searchTerm || statusFilter || assignmentFilter) && (
               <Button
@@ -179,14 +183,16 @@ useEffect(() => {
       </Card>
 
       {/* Virtual Assistant Table */}
-      <VirtualAssistantTable
-        virtualAssistants={filteredVAs}
-        agencies={agencies}
-        loading={loading}
-        error={error}
-onRefresh={loadData}
-      />
-
+      <div className="overflow-hidden">
+        <VirtualAssistantTable
+          virtualAssistants={filteredVAs}
+          agencies={agencies}
+          loading={loading}
+          error={error}
+          onRefresh={loadData}
+          onEdit={handleEditVA}
+        />
+      </div>
       {/* Virtual Assistant Form Modal */}
       <Modal
         isOpen={showForm}

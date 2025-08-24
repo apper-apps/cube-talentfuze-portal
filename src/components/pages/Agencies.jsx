@@ -105,26 +105,47 @@ setEditingAgency(null);
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingAgency(null);
+};
+
+  const handleViewAgency = (agency) => {
+    navigate(`/agencies/${agency.Id}`);
   };
-{/* Filters */}
+
+  return (
+<div className="p-4 sm:p-6">
+<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900">Agencies</h1>
+          <p className="text-slate-600 mt-2">Manage your partner agencies</p>
+        </div>
+        <Button onClick={handleAddAgency} className="flex items-center gap-2">
+          <ApperIcon name="Plus" size={20} />
+          Add Agency
+        </Button>
+      </div>
+</div>
+
+      {/* Filters */}
       <Card className="p-6 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <div className="md:col-span-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-4">
+          <div className="sm:col-span-2 md:col-span-2">
             <SearchBar
               placeholder="Search agencies..."
               value={searchTerm}
               onChange={setSearchTerm}
             />
           </div>
-          <Select
-            placeholder="Filter by Status"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            options={[
-              { value: "active", label: "Active" },
-              { value: "inactive", label: "Inactive" }
-            ]}
-          />
+          <div className="w-full sm:w-auto">
+            <Select
+              placeholder="Filter by Status"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              options={[
+                { value: "active", label: "Active" },
+                { value: "inactive", label: "Inactive" }
+              ]}
+            />
+          </div>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -145,22 +166,6 @@ setEditingAgency(null);
           </div>
         </div>
       </Card>
-  const handleViewAgency = (agency) => {
-    navigate(`/agencies/${agency.Id}`);
-  };
-return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900">Agencies</h1>
-          <p className="text-slate-600 mt-2">Manage your partner agencies</p>
-        </div>
-        <Button onClick={handleAddAgency} className="flex items-center gap-2">
-          <ApperIcon name="Plus" size={20} />
-          Add Agency
-        </Button>
-      </div>
-
 
       <AgencyTable
         agencies={filteredAgencies}

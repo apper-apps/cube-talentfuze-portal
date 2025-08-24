@@ -158,7 +158,7 @@ const loadDashboardData = async () => {
   }
 
   return (
-<div className="space-y-8">
+<div className="space-y-6 sm:space-y-8">
       {/* Key Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
@@ -293,13 +293,13 @@ const loadDashboardData = async () => {
       </div>
 
       {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card className="p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center">
-              <ApperIcon name="Activity" className="w-5 h-5 text-white" />
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+        <Card className="p-4 sm:p-6">
+          <div className="flex items-center gap-3 mb-4 sm:mb-6">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center">
+              <ApperIcon name="Activity" className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-slate-900">Recent Activity</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-slate-900">Recent Activity</h3>
           </div>
           
           <div className="space-y-4">
@@ -318,12 +318,12 @@ const loadDashboardData = async () => {
         </Card>
 
         {/* Quick Actions */}
-        <Card className="p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-success to-emerald-600 rounded-xl flex items-center justify-center">
-              <ApperIcon name="Zap" className="w-5 h-5 text-white" />
+<Card className="p-4 sm:p-6">
+          <div className="flex items-center gap-3 mb-4 sm:mb-6">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-success to-emerald-600 rounded-xl flex items-center justify-center">
+              <ApperIcon name="Zap" className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-slate-900">Quick Actions</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-slate-900">Quick Actions</h3>
           </div>
           
 <div className="space-y-3">
