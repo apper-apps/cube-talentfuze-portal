@@ -1,42 +1,50 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useAuth } from "@/contexts/AuthContext";
 import React from "react";
 import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Sidebar = ({ isMobileOpen, closeMobileSidebar }) => {
-const getNavItems = (userRole) => {
-  const baseItems = [
-    { to: "/", label: "Dashboard", icon: "LayoutDashboard" }
-  ];
-
-  if (userRole === 'TalentFuze') {
-    return [
-      ...baseItems,
-      { to: "/agencies", label: "Agencies", icon: "Building2" },
-      { to: "/virtual-assistants", label: "Virtual Assistants", icon: "Users" },
-      { to: "/check-ins", label: "Check-ins", icon: "CheckSquare" },
-      { to: "/va-requests", label: "VA Requests", icon: "UserPlus" }
-    ];
-  } else if (userRole === 'Agency') {
-    return [
-      ...baseItems,
-      { to: "/virtual-assistants", label: "My Virtual Assistants", icon: "Users" },
-      { to: "/check-ins", label: "Check-ins", icon: "CheckSquare" },
-      { to: "/va-requests", label: "VA Requests", icon: "UserPlus" }
-    ];
-  } else if (userRole === 'VirtualAssistant') {
-    return [
-      ...baseItems,
-      { to: "/check-ins", label: "My Check-ins", icon: "CheckSquare" }
-    ];
+const getNavItems = (hasPermission, userRole) => {
+  const navItems = [];
+  
+  // Dashboard - everyone gets this
+  if (hasPermission('view_dashboard')) {
+    navItems.push({ to: "/", label: "Dashboard", icon: "LayoutDashboard" });
   }
-
-  return baseItems;
+  
+  // Agencies
+  if (hasPermission('view_all_agencies') || hasPermission('view_own_agency')) {
+    navItems.push({ to: "/agencies", label: "Agencies", icon: "Building2" });
+  }
+  
+  // Virtual Assistants
+  if (hasPermission('view_all_vas') || hasPermission('view_assigned_vas')) {
+    const label = hasPermission('view_all_vas') ? "Virtual Assistants" : "My Virtual Assistants";
+    navItems.push({ to: "/virtual-assistants", label, icon: "Users" });
+  }
+  
+  // Check-ins
+  if (hasPermission('view_all_checkins') || hasPermission('view_own_checkins')) {
+    const label = hasPermission('view_all_checkins') ? "Check-ins" : "My Check-ins";
+    navItems.push({ to: "/check-ins", label, icon: "CheckSquare" });
+  }
+  
+  // VA Requests
+  if (hasPermission('view_va_requests')) {
+    navItems.push({ to: "/va-requests", label: "VA Requests", icon: "UserPlus" });
+  }
+  
+  // Role Management - only for admins
+  if (hasPermission('manage_roles')) {
+    navItems.push({ to: "/roles", label: "Role Management", icon: "Shield" });
+  }
+  
+  return navItems;
 };
 
-const { user, logout } = useAuth();
+const { user, logout, hasPermission } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -78,18 +86,18 @@ const { user, logout } = useAuth();
         <h1 className="ml-3 text-xl font-bold text-gray-900">TalentFuze</h1>
       </div>
 
-      <nav className="flex-1 p-4 space-y-2">
-        {getNavItems(user?.role).map((item) => (
+<nav className="flex-1 p-4 space-y-2">
+        {getNavItems(hasPermission, user?.role).map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
-            onClick={closeMobileSidebar}
             className={({ isActive }) =>
               cn(
                 "flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-100 transition-all duration-200 font-medium",
                 isActive && "bg-gradient-to-r from-primary to-accent text-white hover:from-blue-600 hover:to-blue-500 shadow-lg"
               )
             }
+            onClick={closeMobileSidebar}
           >
             <ApperIcon name={item.icon} size={20} />
             {item.label}

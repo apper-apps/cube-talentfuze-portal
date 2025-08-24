@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAuth } from '@/contexts/AuthContext';
 import StatCard from "@/components/molecules/StatCard";
 import Card from "@/components/atoms/Card";
 import Loading from "@/components/ui/Loading";
@@ -10,7 +11,8 @@ import checkInService from "@/services/api/checkInService";
 import { format, subDays, startOfMonth, endOfMonth } from "date-fns";
 import Chart from "react-apexcharts";
 const Dashboard = () => {
-const [stats, setStats] = useState({
+const { hasPermission } = useAuth();
+  const [stats, setStats] = useState({
     totalAgencies: 0,
     activeAgencies: 0,
     totalVAs: 0,
@@ -180,13 +182,15 @@ const loadDashboardData = async () => {
           trend={stats.pendingRequests > 5 ? "down" : "up"}
           trendValue={stats.pendingRequests > 5 ? "High" : "Low"}
         />
-        <StatCard
-          title="Monthly Revenue"
-          value={`$${stats.monthlyRevenue.toLocaleString()}`}
-          icon="DollarSign"
-          trend="up"
-          trendValue="+18%"
-        />
+{hasPermission('view_revenue') && (
+          <StatCard
+            title="Monthly Revenue"
+            value={`$${stats.monthlyRevenue.toLocaleString()}`}
+            icon="DollarSign"
+            trend="up"
+            trendValue="+18%"
+          />
+        )}
       </div>
 
       {/* Additional Metrics */}
@@ -322,17 +326,18 @@ const loadDashboardData = async () => {
             <h3 className="text-xl font-bold text-slate-900">Quick Actions</h3>
           </div>
           
-          <div className="space-y-3">
-            <button className="w-full p-4 text-left bg-gradient-to-r from-primary to-accent text-white rounded-xl hover:from-blue-600 hover:to-blue-500 transition-all duration-200 transform hover:scale-102 shadow-lg">
-              <div className="flex items-center gap-3">
-                <ApperIcon name="Plus" size={20} />
-                <div>
-                  <div className="font-semibold">Add New Agency</div>
-                  <div className="text-sm text-blue-100">Register a new agency partner</div>
+<div className="space-y-3">
+            {hasPermission('manage_agencies') && (
+              <button className="w-full p-4 text-left bg-gradient-to-r from-primary to-accent text-white rounded-xl hover:from-blue-600 hover:to-blue-500 transition-all duration-200 transform hover:scale-102 shadow-lg">
+                <div className="flex items-center gap-3">
+                  <ApperIcon name="Plus" size={20} />
+                  <div>
+                    <div className="font-semibold">Add New Agency</div>
+                    <div className="text-sm text-blue-100">Register a new agency partner</div>
+                  </div>
                 </div>
-              </div>
-            </button>
-            
+              </button>
+            )}
             <button className="w-full p-4 text-left bg-white border-2 border-slate-200 rounded-xl hover:border-primary hover:bg-blue-50 transition-all duration-200">
               <div className="flex items-center gap-3">
                 <ApperIcon name="Users" size={20} className="text-slate-600" />

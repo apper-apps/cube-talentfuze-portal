@@ -1,50 +1,75 @@
-// Mock users with different roles
+import roleService from './roleService';
+
+// Mock users with role-based permissions
 const mockUsers = [
   {
     Id: 1,
     email: "admin@talentfuze.com",
     password: "password123", // In real app, this would be hashed
-    role: "TalentFuze",
+    role: "TalentFuze Admin",
     name: "TalentFuze Admin",
-    permissions: ["view_all_agencies", "view_all_vas", "view_all_checkins", "manage_users"]
+    roleId: 1,
+    permissions: ["view_dashboard", "view_revenue", "view_all_agencies", "manage_agencies", "view_all_vas", "manage_vas", "view_all_checkins", "manage_checkins", "view_va_requests", "manage_va_requests", "manage_users", "manage_roles"]
   },
   {
     Id: 2,
-    email: "agency1@example.com",
+    email: "mentor@talentfuze.com",
     password: "password123",
-    role: "Agency",
-    name: "Agency Manager",
-    agencyId: 1,
-    permissions: ["view_own_agency", "view_assigned_vas", "view_own_checkins"]
+    role: "VA Mentor",
+    name: "VA Mentor",
+    roleId: 4,
+    permissions: ["view_dashboard", "view_all_vas", "view_all_checkins", "manage_checkins"]
   },
   {
     Id: 3,
-    email: "agency2@example.com",
+    email: "operations@talentfuze.com",
     password: "password123",
-    role: "Agency",
-    name: "Agency Manager 2",
-    agencyId: 2,
-    permissions: ["view_own_agency", "view_assigned_vas", "view_own_checkins"]
+    role: "Operations Manager",
+    name: "Operations Manager",
+    roleId: 5,
+    permissions: ["view_dashboard", "view_revenue", "view_all_agencies", "view_all_vas", "manage_vas", "view_all_checkins", "manage_checkins", "view_va_requests", "manage_va_requests"]
   },
   {
     Id: 4,
-    email: "va1@example.com",
+    email: "agency1@example.com",
     password: "password123",
-    role: "VirtualAssistant",
-    name: "Virtual Assistant",
-    virtualAssistantId: 1,
+    role: "Agency Manager",
+    name: "Agency Manager",
+    roleId: 2,
     agencyId: 1,
-    permissions: ["view_own_profile", "view_own_checkins"]
+    permissions: ["view_dashboard", "view_own_agency", "view_assigned_vas", "view_own_checkins", "view_va_requests"]
   },
   {
     Id: 5,
+    email: "agency2@example.com",
+    password: "password123",
+    role: "Agency Manager",
+    name: "Agency Manager 2",
+    roleId: 2,
+    agencyId: 2,
+    permissions: ["view_dashboard", "view_own_agency", "view_assigned_vas", "view_own_checkins", "view_va_requests"]
+  },
+  {
+    Id: 6,
+    email: "va1@example.com",
+    password: "password123",
+    role: "Virtual Assistant",
+    name: "Virtual Assistant",
+    roleId: 3,
+    virtualAssistantId: 1,
+    agencyId: 1,
+    permissions: ["view_dashboard", "view_own_profile", "view_own_checkins"]
+  },
+  {
+    Id: 7,
     email: "va2@example.com",
     password: "password123",
-    role: "VirtualAssistant",
+    role: "Virtual Assistant",
     name: "Virtual Assistant 2",
+    roleId: 3,
     virtualAssistantId: 2,
     agencyId: 2,
-    permissions: ["view_own_profile", "view_own_checkins"]
+    permissions: ["view_dashboard", "view_own_profile", "view_own_checkins"]
   }
 ];
 

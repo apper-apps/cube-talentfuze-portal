@@ -32,16 +32,24 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  const value = {
+const value = {
     user,
     login,
     logout,
     loading,
     isAuthenticated: !!user,
-    hasPermission: (permission) => authService.hasPermission(permission),
+    hasPermission: (permission) => {
+      if (!user) return false;
+      return user.permissions?.includes(permission) || false;
+    },
     canViewAgency: (agencyId) => authService.canViewAgency(agencyId),
     canViewVirtualAssistant: (vaId, agencyId) => authService.canViewVirtualAssistant(vaId, agencyId),
-    canViewCheckIn: (checkIn) => authService.canViewCheckIn(checkIn)
+    canViewCheckIn: (checkIn) => authService.canViewCheckIn(checkIn),
+    isInternalUser: () => {
+      if (!user) return false;
+      const internalRoles = ['TalentFuze Admin', 'VA Mentor', 'Operations Manager', 'Sales Manager'];
+      return internalRoles.includes(user.role);
+    }
   };
 
   return (

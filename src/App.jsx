@@ -9,6 +9,7 @@ import Agencies from "@/components/pages/Agencies";
 import VARequests from "@/components/pages/VARequests";
 import Dashboard from "@/components/pages/Dashboard";
 import VirtualAssistants from "@/components/pages/VirtualAssistants";
+import RoleManagement from "@/components/pages/RoleManagement";
 import Sidebar from "@/components/organisms/Sidebar";
 import Header from "@/components/organisms/Header";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -44,6 +45,7 @@ return (
                 <Route path="/virtual-assistants" element={<ProtectedRoute><VirtualAssistants /></ProtectedRoute>} />
                 <Route path="/check-ins" element={<ProtectedRoute><CheckIns /></ProtectedRoute>} />
                 <Route path="/va-requests" element={<ProtectedRoute><VARequests /></ProtectedRoute>} />
+                <Route path="/roles" element={<ProtectedRoute><RoleManagement /></ProtectedRoute>} />
                 <Route path="/agencies/:id" element={<ProtectedRoute><AgencyDetails /></ProtectedRoute>} />
               </Routes>
             </main>

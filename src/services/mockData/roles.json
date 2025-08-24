@@ -1,0 +1,88 @@
+[
+  {
+    "Id": 1,
+    "name": "TalentFuze Admin",
+    "description": "Full system administrator with all permissions",
+    "type": "internal",
+    "permissions": [
+      "view_dashboard",
+      "view_revenue",
+      "view_all_agencies",
+      "manage_agencies",
+      "view_all_vas",
+      "manage_vas",
+      "view_all_checkins",
+      "manage_checkins",
+      "view_va_requests",
+      "manage_va_requests",
+      "manage_users",
+      "manage_roles"
+    ]
+  },
+  {
+    "Id": 2,
+    "name": "Agency Manager",
+    "description": "External agency partner with access to their VAs and check-ins",
+    "type": "external",
+    "permissions": [
+      "view_dashboard",
+      "view_own_agency",
+      "view_assigned_vas",
+      "view_own_checkins",
+      "view_va_requests"
+    ]
+  },
+  {
+    "Id": 3,
+    "name": "Virtual Assistant",
+    "description": "Individual VA with access to their own data and check-ins",
+    "type": "external", 
+    "permissions": [
+      "view_dashboard",
+      "view_own_profile",
+      "view_own_checkins"
+    ]
+  },
+  {
+    "Id": 4,
+    "name": "VA Mentor",
+    "description": "Internal team member who mentors VAs but doesn't need revenue access",
+    "type": "internal",
+    "permissions": [
+      "view_dashboard",
+      "view_all_vas",
+      "view_all_checkins",
+      "manage_checkins"
+    ]
+  },
+  {
+    "Id": 5,
+    "name": "Operations Manager",
+    "description": "Internal operations team with broad access but limited admin functions",
+    "type": "internal",
+    "permissions": [
+      "view_dashboard",
+      "view_revenue",
+      "view_all_agencies",
+      "view_all_vas",
+      "manage_vas",
+      "view_all_checkins",
+      "manage_checkins",
+      "view_va_requests",
+      "manage_va_requests"
+    ]
+  },
+  {
+    "Id": 6,
+    "name": "Sales Manager",
+    "description": "Internal sales team with agency and revenue focus",
+    "type": "internal",
+    "permissions": [
+      "view_dashboard",
+      "view_revenue", 
+      "view_all_agencies",
+      "manage_agencies",
+      "view_va_requests"
+    ]
+  }
+]
