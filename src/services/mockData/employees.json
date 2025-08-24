@@ -1,0 +1,62 @@
+[
+  {
+    "Id": 1,
+    "agencyId": 1,
+    "name": "John Smith",
+    "role": "Project Manager",
+    "email": "john.smith@digitalms.com",
+    "accessLevel": "manager",
+    "createdAt": "2024-01-20T10:00:00Z",
+    "updatedAt": "2024-01-20T10:00:00Z"
+  },
+  {
+    "Id": 2,
+    "agencyId": 1,
+    "name": "Emily Johnson",
+    "role": "Marketing Coordinator",
+    "email": "emily.johnson@digitalms.com",
+    "accessLevel": "user",
+    "createdAt": "2024-01-22T14:30:00Z",
+    "updatedAt": "2024-01-22T14:30:00Z"
+  },
+  {
+    "Id": 3,
+    "agencyId": 2,
+    "name": "Alex Wu",
+    "role": "Creative Director",
+    "email": "alex.wu@creativepartners.com",
+    "accessLevel": "admin",
+    "createdAt": "2024-02-05T11:15:00Z",
+    "updatedAt": "2024-02-05T11:15:00Z"
+  },
+  {
+    "Id": 4,
+    "agencyId": 2,
+    "name": "Maria Garcia",
+    "role": "Account Executive",
+    "email": "maria.garcia@creativepartners.com",
+    "accessLevel": "user",
+    "createdAt": "2024-02-08T09:45:00Z",
+    "updatedAt": "2024-02-08T09:45:00Z"
+  },
+  {
+    "Id": 5,
+    "agencyId": 4,
+    "name": "Robert Kim",
+    "role": "Growth Analyst",
+    "email": "robert.kim@growthmc.com",
+    "accessLevel": "user",
+    "createdAt": "2024-02-15T13:20:00Z",
+    "updatedAt": "2024-02-15T13:20:00Z"
+  },
+  {
+    "Id": 6,
+    "agencyId": 5,
+    "name": "Sophie Anderson",
+    "role": "Brand Strategist",
+    "email": "sophie.anderson@brandexcellence.com",
+    "accessLevel": "manager",
+    "createdAt": "2024-03-05T16:10:00Z",
+    "updatedAt": "2024-03-05T16:10:00Z"
+  }
+]

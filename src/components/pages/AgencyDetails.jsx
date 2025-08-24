@@ -6,23 +6,99 @@ import Badge from "@/components/atoms/Badge";
 import Card from "@/components/atoms/Card";
 import Modal from "@/components/molecules/Modal";
 import AgencyForm from "@/components/organisms/AgencyForm";
+import InternalEmployeeForm from "@/components/organisms/InternalEmployeeForm";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import ApperIcon from "@/components/ApperIcon";
 import agencyService from "@/services/api/agencyService";
+import employeeService from "@/services/api/employeeService";
 
 const AgencyDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [agency, setAgency] = useState(null);
+const [agency, setAgency] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
-
-  useEffect(() => {
+  const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
+  const [editingEmployee, setEditingEmployee] = useState(null);
+  const [employees, setEmployees] = useState([]);
+  const [employeeFormLoading, setEmployeeFormLoading] = useState(false);
+useEffect(() => {
     loadAgency();
+    loadEmployees();
   }, [id]);
+
+  const loadEmployees = async () => {
+    try {
+      const employeeData = await employeeService.getByAgencyId(id);
+      setEmployees(employeeData);
+    } catch (err) {
+      toast.error("Failed to load employees");
+    }
+  };
+
+  const handleAddEmployee = () => {
+    setEditingEmployee(null);
+    setIsEmployeeModalOpen(true);
+  };
+
+  const handleEditEmployee = (employee) => {
+    setEditingEmployee(employee);
+    setIsEmployeeModalOpen(true);
+  };
+
+  const handleSaveEmployee = async (formData) => {
+    try {
+      setEmployeeFormLoading(true);
+      const employeeData = { ...formData, agencyId: parseInt(id) };
+      
+      if (editingEmployee) {
+        const updatedEmployee = await employeeService.update(editingEmployee.Id, employeeData);
+        setEmployees(prev => prev.map(emp => emp.Id === updatedEmployee.Id ? updatedEmployee : emp));
+        toast.success(`Employee ${formData.name} has been updated successfully`);
+      } else {
+        const newEmployee = await employeeService.create(employeeData);
+        setEmployees(prev => [...prev, newEmployee]);
+        toast.success(`Employee ${formData.name} has been added successfully`);
+      }
+      
+      setIsEmployeeModalOpen(false);
+    } catch (error) {
+      toast.error("Failed to save employee. Please try again.");
+      throw error;
+    } finally {
+      setEmployeeFormLoading(false);
+    }
+  };
+
+  const handleDeleteEmployee = async (employee) => {
+    if (window.confirm(`Are you sure you want to remove ${employee.name} from this agency?`)) {
+      try {
+        await employeeService.delete(employee.Id);
+        setEmployees(prev => prev.filter(emp => emp.Id !== employee.Id));
+        toast.success(`Employee ${employee.name} has been removed successfully`);
+      } catch (error) {
+        toast.error("Failed to remove employee. Please try again.");
+      }
+    }
+  };
+
+  const handleCloseEmployeeModal = () => {
+    setIsEmployeeModalOpen(false);
+    setEditingEmployee(null);
+  };
+
+  const getAccessLevelBadgeVariant = (accessLevel) => {
+    switch (accessLevel) {
+      case 'admin': return 'error';
+      case 'manager': return 'warning';
+      case 'user': return 'default';
+      case 'viewer': return 'secondary';
+      default: return 'secondary';
+    }
+  };
 
   const loadAgency = async () => {
     try {
@@ -61,7 +137,7 @@ const AgencyDetails = () => {
     setIsEditModalOpen(false);
   };
 
-  const handleBackToList = () => {
+const handleBackToList = () => {
     navigate("/agencies");
   };
 
@@ -209,8 +285,87 @@ const AgencyDetails = () => {
                 <p className="text-base text-slate-900">
                   {agency.createdAt ? new Date(agency.createdAt).toLocaleDateString() : "N/A"}
                 </p>
-              </div>
+</div>
             </div>
+          </Card>
+
+          {/* Internal Employees Card */}
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-slate-900">Internal Employees</h2>
+              <Button
+                onClick={handleAddEmployee}
+                size="sm"
+                className="flex items-center gap-2"
+              >
+                <ApperIcon name="Plus" size={16} />
+                Add Employee
+              </Button>
+            </div>
+            
+            {employees.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <ApperIcon name="Users" size={32} className="text-slate-400" />
+                </div>
+                <p className="text-slate-600 mb-2">No internal employees yet</p>
+                <p className="text-sm text-slate-500 mb-4">
+                  Add team members to manage this agency's internal staff.
+                </p>
+                <Button
+                  onClick={handleAddEmployee}
+                  variant="secondary"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <ApperIcon name="Plus" size={16} />
+                  Add First Employee
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {employees.map((employee) => (
+                  <div
+                    key={employee.Id}
+                    className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
+                        <ApperIcon name="User" size={18} className="text-white" />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-slate-900">{employee.name}</div>
+                        <div className="text-sm text-slate-600">{employee.role}</div>
+                        <div className="text-sm text-slate-500">{employee.email}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Badge variant={getAccessLevelBadgeVariant(employee.accessLevel)}>
+                        {employee.accessLevel.charAt(0).toUpperCase() + employee.accessLevel.slice(1)}
+                      </Badge>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => handleEditEmployee(employee)}
+                          className="p-2"
+                        >
+                          <ApperIcon name="Edit" size={16} />
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => handleDeleteEmployee(employee)}
+                          className="p-2 hover:bg-red-50 hover:text-red-600"
+                        >
+                          <ApperIcon name="Trash2" size={16} />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </Card>
         </div>
 
@@ -253,7 +408,7 @@ const AgencyDetails = () => {
         </div>
       </div>
 
-      {/* Edit Modal */}
+{/* Edit Modal */}
       <Modal
         isOpen={isEditModalOpen}
         onClose={handleCloseModal}
@@ -265,6 +420,21 @@ const AgencyDetails = () => {
           onSave={handleSaveAgency}
           onCancel={handleCloseModal}
           loading={formLoading}
+        />
+      </Modal>
+
+      {/* Employee Modal */}
+      <Modal
+        isOpen={isEmployeeModalOpen}
+        onClose={handleCloseEmployeeModal}
+        title={editingEmployee ? "Edit Employee" : "Add Employee"}
+        size="lg"
+      >
+        <InternalEmployeeForm
+          employee={editingEmployee}
+          onSave={handleSaveEmployee}
+          onCancel={handleCloseEmployeeModal}
+          loading={employeeFormLoading}
         />
       </Modal>
     </div>
