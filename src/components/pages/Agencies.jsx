@@ -1,12 +1,14 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import Button from "@/components/atoms/Button";
-import SearchBar from "@/components/molecules/SearchBar";
+import ApperIcon from "@/components/ApperIcon";
 import Modal from "@/components/molecules/Modal";
+import SearchBar from "@/components/molecules/SearchBar";
+import Card from "@/components/atoms/Card";
+import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
 import AgencyTable from "@/components/organisms/AgencyTable";
 import AgencyForm from "@/components/organisms/AgencyForm";
-import ApperIcon from "@/components/ApperIcon";
 import agencyService from "@/services/api/agencyService";
 
 const Agencies = () => {
@@ -15,24 +17,34 @@ const Agencies = () => {
   const [filteredAgencies, setFilteredAgencies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
+const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAgency, setEditingAgency] = useState(null);
-
   // Load agencies on component mount
   useEffect(() => {
     loadAgencies();
   }, []);
 
   // Filter agencies based on search term
-  useEffect(() => {
-    const filtered = agencies.filter((agency) =>
-      agency.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      agency.contactName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      agency.contactEmail.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+useEffect(() => {
+    const filtered = agencies.filter((agency) => {
+      const matchesSearch = !searchTerm || 
+        agency.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        agency.contactName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        agency.contactEmail.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesStatus = !statusFilter || agency.status === statusFilter;
+      
+      return matchesSearch && matchesStatus;
+    });
     setFilteredAgencies(filtered);
-  }, [agencies, searchTerm]);
+  }, [agencies, searchTerm, statusFilter]);
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setStatusFilter("");
+  };
 
   const loadAgencies = async () => {
     try {
@@ -94,7 +106,45 @@ setEditingAgency(null);
     setIsModalOpen(false);
     setEditingAgency(null);
   };
-
+{/* Filters */}
+      <Card className="p-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div className="md:col-span-2">
+            <SearchBar
+              placeholder="Search agencies..."
+              value={searchTerm}
+              onChange={setSearchTerm}
+            />
+          </div>
+          <Select
+            placeholder="Filter by Status"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            options={[
+              { value: "active", label: "Active" },
+              { value: "inactive", label: "Inactive" }
+            ]}
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {(searchTerm || statusFilter) && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={clearFilters}
+                className="flex items-center gap-2"
+              >
+                <ApperIcon name="X" size={14} />
+                Clear Filters
+              </Button>
+            )}
+          </div>
+          <div className="text-sm text-slate-600">
+            Showing {filteredAgencies.length} of {agencies.length} agencies
+          </div>
+        </div>
+      </Card>
   const handleViewAgency = (agency) => {
     navigate(`/agencies/${agency.Id}`);
   };
@@ -111,13 +161,6 @@ return (
         </Button>
       </div>
 
-      <div className="mb-6">
-        <SearchBar
-          placeholder="Search agencies..."
-          value={searchTerm}
-          onChange={setSearchTerm}
-        />
-      </div>
 
       <AgencyTable
         agencies={filteredAgencies}
