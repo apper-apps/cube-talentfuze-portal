@@ -7,7 +7,8 @@ const navItems = [
     { to: "/", label: "Dashboard", icon: "LayoutDashboard" },
     { to: "/agencies", label: "Agencies", icon: "Building2" },
     { to: "/virtual-assistants", label: "Virtual Assistants", icon: "Users" },
-    { to: "/check-ins", label: "Check-ins", icon: "CheckSquare" }
+    { to: "/check-ins", label: "Check-ins", icon: "CheckSquare" },
+    { to: "/va-requests", label: "VA Requests", icon: "UserPlus" }
   ];
 
   const SidebarContent = () => (

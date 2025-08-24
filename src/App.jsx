@@ -8,6 +8,7 @@ import Agencies from "@/components/pages/Agencies";
 import VirtualAssistants from "@/components/pages/VirtualAssistants";
 import CheckIns from "@/components/pages/CheckIns";
 import AgencyDetails from "@/components/pages/AgencyDetails";
+import VARequests from "@/components/pages/VARequests";
 
 function App() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -34,12 +35,13 @@ function App() {
             
             <main className="flex-1 p-6 lg:p-8">
               <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/agencies" element={<Agencies />} />
+<Route path="/" element={<Dashboard />} />
+<Route path="/agencies" element={<Agencies />} />
 <Route path="/virtual-assistants" element={<VirtualAssistants />} />
-                <Route path="/check-ins" element={<CheckIns />} />
-                <Route path="/agencies/:id" element={<AgencyDetails />} />
-              </Routes>
+<Route path="/check-ins" element={<CheckIns />} />
+<Route path="/va-requests" element={<VARequests />} />
+<Route path="/agencies/:id" element={<AgencyDetails />} />
+</Routes>
             </main>
           </div>
         </div>

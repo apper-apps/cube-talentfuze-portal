@@ -5,6 +5,8 @@
     "email": "alex.thompson@email.com",
     "agencyId": 1,
     "skills": ["Social Media Management", "Content Writing", "Email Marketing"],
+    "experienceLevel": "Intermediate",
+    "hourlyRate": 18,
     "status": "assigned",
     "startDate": "2024-01-15T00:00:00Z"
   },
@@ -14,6 +16,8 @@
     "email": "maria.garcia@email.com",
     "agencyId": 1,
     "skills": ["Graphic Design", "Adobe Creative Suite", "Brand Strategy"],
+    "experienceLevel": "Expert",
+    "hourlyRate": 28,
     "status": "assigned",
     "startDate": "2024-01-20T00:00:00Z"
   },
@@ -23,6 +27,8 @@
     "email": "james.wilson@email.com",
     "agencyId": 2,
     "skills": ["Software Development", "JavaScript", "React", "Node.js"],
+    "experienceLevel": "Expert",
+    "hourlyRate": 35,
     "status": "assigned",
     "startDate": "2024-01-25T00:00:00Z"
   },
@@ -32,6 +38,8 @@
     "email": "sophie.chen@email.com",
     "agencyId": 2,
     "skills": ["Data Analysis", "Excel", "Power BI", "SQL"],
+    "experienceLevel": "Intermediate",
+    "hourlyRate": 22,
     "status": "assigned",
     "startDate": "2024-02-01T00:00:00Z"
   },
@@ -41,6 +49,8 @@
     "email": "roberto.martinez@email.com",
     "agencyId": 3,
     "skills": ["Video Editing", "Motion Graphics", "After Effects"],
+    "experienceLevel": "Intermediate",
+    "hourlyRate": 25,
     "status": "assigned",
     "startDate": "2024-02-05T00:00:00Z"
   },
@@ -50,6 +60,8 @@
     "email": "jennifer.lee@email.com",
     "agencyId": 3,
     "skills": ["Project Management", "Agile", "Scrum", "Communication"],
+    "experienceLevel": "Expert",
+    "hourlyRate": 30,
     "status": "assigned",
     "startDate": "2024-02-10T00:00:00Z"
   },
@@ -59,6 +71,8 @@
     "email": "daniel.kim@email.com",
     "agencyId": 5,
     "skills": ["SEO Optimization", "Google Analytics", "Keyword Research"],
+    "experienceLevel": "Intermediate",
+    "hourlyRate": 20,
     "status": "assigned",
     "startDate": "2024-02-15T00:00:00Z"
   },
@@ -68,6 +82,8 @@
     "email": "amanda.davis@email.com",
     "agencyId": 5,
     "skills": ["Customer Support", "CRM Management", "Live Chat"],
+    "experienceLevel": "Entry Level",
+    "hourlyRate": 15,
     "status": "available",
     "startDate": "2024-02-20T00:00:00Z"
   },
@@ -77,6 +93,8 @@
     "email": "carlos.ruiz@email.com",
     "agencyId": 1,
     "skills": ["Translation", "Content Localization", "Proofreading"],
+    "experienceLevel": "Intermediate",
+    "hourlyRate": 19,
     "status": "assigned",
     "startDate": "2024-02-25T00:00:00Z"
   },
@@ -86,6 +104,8 @@
     "email": "rachel.green@email.com",
     "agencyId": 4,
     "skills": ["Bookkeeping", "QuickBooks", "Financial Analysis"],
+    "experienceLevel": "Expert",
+    "hourlyRate": 32,
     "status": "inactive",
     "startDate": "2024-01-05T00:00:00Z"
   }
