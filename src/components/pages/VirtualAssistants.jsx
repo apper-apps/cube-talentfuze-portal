@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import ApperIcon from "@/components/ApperIcon";
 import Modal from "@/components/molecules/Modal";
@@ -19,6 +20,7 @@ const [virtualAssistants, setVirtualAssistants] = useState([]);
 const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [assignmentFilter, setAssignmentFilter] = useState("");
+const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [editingVA, setEditingVA] = useState(null);
   const [formLoading, setFormLoading] = useState(false);
@@ -190,7 +192,8 @@ useEffect(() => {
           loading={loading}
           error={error}
           onRefresh={loadData}
-          onEdit={handleEditVA}
+onEdit={handleEditVA}
+          onRowClick={(va) => navigate(`/virtual-assistants/${va.Id}`)}
         />
       </div>
       {/* Virtual Assistant Form Modal */}

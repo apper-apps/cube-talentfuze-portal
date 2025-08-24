@@ -1,5 +1,16 @@
-import virtualAssistantsData from "@/services/mockData/virtualAssistants.json";
 import authService from "./authService";
+import React from "react";
+import Error from "@/components/ui/Error";
+import virtualAssistantsData from "@/services/mockData/virtualAssistants.json";
+
+// Mock agency history data
+const mockAgencyHistory = [
+  { vaId: 1, agencyName: "TechStart Corp", role: "Administrative Assistant", startDate: "2023-01-15", endDate: "2023-12-31", status: "completed", rating: 5, notes: "Excellent performance in email management and client coordination. Consistently exceeded expectations." },
+  { vaId: 1, agencyName: "Marketing Plus Agency", role: "Project Coordinator", startDate: "2024-01-01", endDate: null, status: "current", rating: 4.8, notes: "Currently managing multiple client projects with outstanding results." },
+  { vaId: 2, agencyName: "Global Solutions Inc", role: "Data Entry Specialist", startDate: "2022-06-01", endDate: "2023-08-15", status: "completed", rating: 4.5, notes: "Reliable and accurate data processing. Maintained 99.8% accuracy rate." },
+  { vaId: 2, agencyName: "Innovation Hub", role: "Virtual Assistant", startDate: "2023-09-01", endDate: null, status: "current", rating: 5, notes: "Exceptional organizational skills and client communication." },
+  { vaId: 3, agencyName: "StartupXYZ", role: "Customer Support", startDate: "2023-03-01", endDate: "2023-11-30", status: "completed", rating: 4.2, notes: "Good customer service skills with room for technical improvement." },
+];
 
 class VirtualAssistantService {
   constructor() {
@@ -84,6 +95,13 @@ async create(vaData) {
     };
     this.virtualAssistants.push(newVA);
     return { ...newVA };
+  }
+
+  async getVAHistory(vaId) {
+    await this.delay();
+    return mockAgencyHistory
+      .filter(history => history.vaId === parseInt(vaId))
+      .sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
   }
 
   async update(id, vaData) {

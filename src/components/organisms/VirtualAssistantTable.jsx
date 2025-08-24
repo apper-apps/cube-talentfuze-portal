@@ -10,10 +10,11 @@ import Loading from "@/components/ui/Loading";
 
 const VirtualAssistantTable = ({ 
   virtualAssistants, 
-  agencies,
+agencies,
   loading, 
   error, 
-  onRefresh 
+  onRefresh,
+  onRowClick
 }) => {
   const [sortField, setSortField] = useState("name");
   const [sortDirection, setSortDirection] = useState("asc");
@@ -133,10 +134,11 @@ const VirtualAssistantTable = ({
                     </tr>
                 </thead>
                 <tbody>
-                    {sortedVAs.map((va, index) => <tr
+{sortedVAs.map((va, index) => <tr
                         key={va.Id}
+                        onClick={() => onRowClick && onRowClick(va)}
                         className={cn(
-                            "border-b border-slate-100 hover:bg-slate-50 transition-colors",
+                            "border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer",
                             index % 2 === 0 ? "bg-white" : "bg-slate-25"
                         )}>
                         <td className="px-4 sm:px-6 py-3 sm:py-4">
