@@ -1,17 +1,24 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import VirtualAssistantForm from "@/components/organisms/VirtualAssistantForm";
+import ApperIcon from "@/components/ApperIcon";
+import Modal from "@/components/molecules/Modal";
 import SearchBar from "@/components/molecules/SearchBar";
+import Button from "@/components/atoms/Button";
 import VirtualAssistantTable from "@/components/organisms/VirtualAssistantTable";
-import virtualAssistantService from "@/services/api/virtualAssistantService";
 import agencyService from "@/services/api/agencyService";
+import virtualAssistantService from "@/services/api/virtualAssistantService";
 
 const VirtualAssistants = () => {
-  const [virtualAssistants, setVirtualAssistants] = useState([]);
+const [virtualAssistants, setVirtualAssistants] = useState([]);
   const [agencies, setAgencies] = useState([]);
   const [filteredVAs, setFilteredVAs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [showForm, setShowForm] = useState(false);
+  const [editingVA, setEditingVA] = useState(null);
+  const [formLoading, setFormLoading] = useState(false);
   const loadData = async () => {
     try {
       setError("");
@@ -30,6 +37,45 @@ const VirtualAssistants = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+const handleCreateVA = () => {
+    setEditingVA(null);
+    setShowForm(true);
+  };
+
+  const handleEditVA = (va) => {
+    setEditingVA(va);
+    setShowForm(true);
+  };
+
+  const handleSaveVA = async (vaData) => {
+    setFormLoading(true);
+    try {
+      if (editingVA) {
+        await virtualAssistantService.update(editingVA.Id, vaData);
+        setVirtualAssistants(prev => 
+          prev.map(va => va.Id === editingVA.Id ? { ...va, ...vaData } : va)
+        );
+        toast.success(`${vaData.name} has been updated successfully`);
+      } else {
+        const newVA = await virtualAssistantService.create(vaData);
+        setVirtualAssistants(prev => [...prev, newVA]);
+        toast.success(`${vaData.name} has been created successfully`);
+      }
+      setShowForm(false);
+      setEditingVA(null);
+    } catch (error) {
+      toast.error("Failed to save virtual assistant. Please try again.");
+      throw error;
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleCloseForm = () => {
+    setShowForm(false);
+    setEditingVA(null);
   };
 
   useEffect(() => {
@@ -54,11 +100,15 @@ const VirtualAssistants = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">Virtual Assistants</h1>
           <p className="text-slate-600 mt-1">Manage virtual assistant assignments and availability</p>
         </div>
+        <Button onClick={handleCreateVA} className="flex items-center gap-2">
+          <ApperIcon name="Plus" size={20} />
+          Create Virtual Assistant
+        </Button>
       </div>
 
       {/* Search Bar */}
@@ -76,8 +126,24 @@ const VirtualAssistants = () => {
         agencies={agencies}
         loading={loading}
         error={error}
-        onRefresh={loadData}
+onRefresh={loadData}
       />
+
+      {/* Virtual Assistant Form Modal */}
+      <Modal
+        isOpen={showForm}
+        onClose={handleCloseForm}
+        title={editingVA ? "Edit Virtual Assistant" : "Create Virtual Assistant"}
+        size="lg"
+      >
+        <VirtualAssistantForm
+          virtualAssistant={editingVA}
+          agencies={agencies}
+          onSave={handleSaveVA}
+          onCancel={handleCloseForm}
+          loading={formLoading}
+        />
+      </Modal>
     </div>
   );
 };

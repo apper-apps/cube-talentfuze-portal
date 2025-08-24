@@ -28,13 +28,12 @@ class VirtualAssistantService {
     return this.virtualAssistants.filter(va => va.agencyId === parseInt(agencyId));
   }
 
-  async create(vaData) {
+async create(vaData) {
     await this.delay(400);
     const maxId = Math.max(...this.virtualAssistants.map(va => va.Id), 0);
     const newVA = {
       Id: maxId + 1,
-      ...vaData,
-      startDate: new Date().toISOString()
+      ...vaData
     };
     this.virtualAssistants.push(newVA);
     return { ...newVA };
