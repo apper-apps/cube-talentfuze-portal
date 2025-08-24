@@ -10,6 +10,7 @@ import Button from "@/components/atoms/Button";
 import Badge from "@/components/atoms/Badge";
 import AgencyForm from "@/components/organisms/AgencyForm";
 import InternalEmployeeForm from "@/components/organisms/InternalEmployeeForm";
+import MonthlySummaryForm from "@/components/organisms/MonthlySummaryForm";
 import Error from "@/components/ui/Error";
 import Loading from "@/components/ui/Loading";
 import employeeService from "@/services/api/employeeService";
@@ -34,13 +35,19 @@ const [agency, setAgency] = useState(null);
   const [unassignedVAs, setUnassignedVAs] = useState([]);
   const [vaAssignLoading, setVaAssignLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('details');
-  const [checkIns, setCheckIns] = useState([]);
+const [checkIns, setCheckIns] = useState([]);
   const [checkInsLoading, setCheckInsLoading] = useState(true);
+  const [monthlySummaries, setMonthlySummaries] = useState([]);
+  const [monthlySummariesLoading, setMonthlySummariesLoading] = useState(true);
+  const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false);
+  const [editingSummary, setEditingSummary] = useState(null);
+  const [summarySearchTerm, setSummarySearchTerm] = useState("");
   useEffect(() => {
     loadAgency();
     loadEmployees();
 loadVirtualAssistants();
-    loadCheckIns();
+loadCheckIns();
+    loadMonthlySummaries();
   }, [id]);
 
   const loadEmployees = async () => {
@@ -196,7 +203,7 @@ loadVirtualAssistants();
     }
   };
 // Load check-ins for agency
-  const loadCheckIns = async () => {
+const loadCheckIns = async () => {
     try {
       setCheckInsLoading(true);
       const data = await checkInService.getByAgencyId(parseInt(id));
@@ -208,6 +215,68 @@ loadVirtualAssistants();
       setCheckInsLoading(false);
     }
   };
+
+  const loadMonthlySummaries = async () => {
+    try {
+      setMonthlySummariesLoading(true);
+      const data = await agencyService.getMonthlySummariesByAgencyId(parseInt(id));
+      setMonthlySummaries(data);
+    } catch (err) {
+      console.error('Failed to load monthly summaries:', err);
+      toast.error('Failed to load monthly summaries');
+    } finally {
+      setMonthlySummariesLoading(false);
+    }
+  };
+
+  const handleCreateSummary = () => {
+    setEditingSummary(null);
+    setIsSummaryModalOpen(true);
+  };
+
+  const handleEditSummary = (summary) => {
+    setEditingSummary(summary);
+    setIsSummaryModalOpen(true);
+  };
+
+  const handleSaveSummary = async (formData) => {
+    try {
+      if (editingSummary) {
+        await agencyService.updateMonthlySummary(editingSummary.Id, formData);
+        toast.success('Monthly summary updated successfully');
+      } else {
+        await agencyService.createMonthlySummary({ ...formData, agencyId: parseInt(id) });
+        toast.success('Monthly summary created successfully');
+      }
+      setIsSummaryModalOpen(false);
+      setEditingSummary(null);
+      loadMonthlySummaries();
+    } catch (error) {
+      toast.error('Failed to save monthly summary');
+      throw error;
+    }
+  };
+
+  const handleDeleteSummary = async (summary) => {
+    if (window.confirm(`Are you sure you want to delete the monthly summary for ${summary.reportingPeriod}? This action cannot be undone.`)) {
+      try {
+        await agencyService.deleteMonthlySummary(summary.Id);
+        toast.success('Monthly summary deleted successfully');
+        loadMonthlySummaries();
+      } catch (error) {
+        toast.error('Failed to delete monthly summary');
+      }
+    }
+  };
+
+  const handleCloseSummaryModal = () => {
+    setIsSummaryModalOpen(false);
+    setEditingSummary(null);
+  };
+
+  const filteredSummaries = monthlySummaries.filter(summary =>
+    summary.reportingPeriod.toLowerCase().includes(summarySearchTerm.toLowerCase())
+  );
   const handleEditAgency = () => {
     setIsEditModalOpen(true);
   };
@@ -310,7 +379,7 @@ return (
                 Agency Details
               </div>
             </button>
-            <button
+<button
               onClick={() => setActiveTab('checkins')}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'checkins'
@@ -321,6 +390,20 @@ return (
               <div className="flex items-center gap-2">
                 <ApperIcon name="CheckSquare" size={16} />
                 Check-ins ({checkIns.length})
+              </div>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('reports')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'reports'
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <ApperIcon name="FileText" size={16} />
+                Monthly Reports ({monthlySummaries.length})
               </div>
             </button>
           </nav>
@@ -593,7 +676,7 @@ return (
         </>
       )}
 
-      {activeTab === 'checkins' && (
+{activeTab === 'checkins' && (
         <div className="space-y-6">
           <Card className="p-6">
             <div className="flex items-center justify-between mb-6">
@@ -684,7 +767,150 @@ return (
               </div>
             )}
           </Card>
-</div>
+        </div>
+      )}
+
+      {activeTab === 'reports' && (
+        <div className="space-y-6">
+          <Card className="p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+              <div>
+                <h3 className="text-lg font-semibold text-slate-900">Monthly Reports</h3>
+                <p className="text-sm text-slate-600 mt-1">
+                  Comprehensive monthly check-in summaries for performance tracking
+                </p>
+              </div>
+              <Button onClick={handleCreateSummary} className="flex items-center gap-2">
+                <ApperIcon name="Plus" size={16} />
+                Create Report
+              </Button>
+            </div>
+
+            <div className="mb-6">
+              <div className="relative">
+                <ApperIcon name="Search" size={16} className="absolute left-3 top-3 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Search by reporting period..."
+                  value={summarySearchTerm}
+                  onChange={(e) => setSummarySearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {monthlySummariesLoading ? (
+              <Loading rows={3} />
+            ) : filteredSummaries.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <ApperIcon name="FileText" size={32} className="text-slate-400" />
+                </div>
+                <p className="text-slate-600 mb-2">
+                  {summarySearchTerm ? 'No reports found' : 'No monthly reports yet'}
+                </p>
+                <p className="text-sm text-slate-500 mb-4">
+                  {summarySearchTerm ? 'Try adjusting your search criteria' : 'Create the first monthly summary report to get started'}
+                </p>
+                {!summarySearchTerm && (
+                  <Button onClick={handleCreateSummary} className="flex items-center gap-2">
+                    <ApperIcon name="Plus" size={16} />
+                    Create First Report
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filteredSummaries.map((summary) => (
+                  <div
+                    key={summary.Id}
+                    className="border border-slate-200 rounded-lg p-6 hover:bg-slate-50 transition-colors"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
+                          <ApperIcon name="Calendar" size={20} className="text-white" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-slate-900 text-lg">
+                            {summary.reportingPeriod}
+                          </h4>
+                          <p className="text-sm text-slate-500">
+                            Created {new Date(summary.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => handleEditSummary(summary)}
+                          className="flex items-center gap-1"
+                        >
+                          <ApperIcon name="Edit" size={14} />
+                          Edit
+                        </Button>
+                        <Button
+                          variant="error"
+                          size="sm"
+                          onClick={() => handleDeleteSummary(summary)}
+                          className="flex items-center gap-1"
+                        >
+                          <ApperIcon name="Trash2" size={14} />
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                          Overall Performance Notes
+                        </label>
+                        <div className="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg">
+                          {summary.performanceNotes || 'No performance notes provided'}
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                          Key Achievements
+                        </label>
+                        <div className="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg">
+                          {summary.keyAchievements || 'No achievements listed'}
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                          Areas for Improvement
+                        </label>
+                        <div className="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg">
+                          {summary.areasForImprovement || 'No improvement areas noted'}
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                          Next Month's Goals
+                        </label>
+                        <div className="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg">
+                          {summary.nextMonthGoals || 'No goals set'}
+                        </div>
+                      </div>
+                    </div>
+
+                    {summary.updatedAt !== summary.createdAt && (
+                      <div className="mt-4 text-xs text-slate-500 border-t pt-3">
+                        Last updated: {new Date(summary.updatedAt).toLocaleString()}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </Card>
+        </div>
       )}
 
       {/* Edit Modal */}
@@ -716,8 +942,7 @@ return (
           loading={employeeFormLoading}
         />
       </Modal>
-
-      {/* VA Assignment Modal */}
+{/* VA Assignment Modal */}
       <Modal
         isOpen={isVaAssignModalOpen}
         onClose={() => setIsVaAssignModalOpen(false)}
@@ -769,6 +994,20 @@ return (
             </>
           )}
         </div>
+      </Modal>
+
+      {/* Monthly Summary Modal */}
+      <Modal
+        isOpen={isSummaryModalOpen}
+        onClose={handleCloseSummaryModal}
+        title={editingSummary ? "Edit Monthly Report" : "Create Monthly Report"}
+        size="xl"
+      >
+        <MonthlySummaryForm
+          summary={editingSummary}
+          onSave={handleSaveSummary}
+          onCancel={handleCloseSummaryModal}
+        />
       </Modal>
     </div>
   );
