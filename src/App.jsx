@@ -1,15 +1,17 @@
-import { useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React, { useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import Header from "@/components/organisms/Header";
-import Sidebar from "@/components/organisms/Sidebar";
-import Dashboard from "@/components/pages/Dashboard";
-import Agencies from "@/components/pages/Agencies";
-import VirtualAssistants from "@/components/pages/VirtualAssistants";
-import CheckIns from "@/components/pages/CheckIns";
+import { AuthProvider } from "@/contexts/AuthContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import Login from "@/components/pages/Login";
 import AgencyDetails from "@/components/pages/AgencyDetails";
+import CheckIns from "@/components/pages/CheckIns";
+import Agencies from "@/components/pages/Agencies";
 import VARequests from "@/components/pages/VARequests";
-
+import Dashboard from "@/components/pages/Dashboard";
+import VirtualAssistants from "@/components/pages/VirtualAssistants";
+import Sidebar from "@/components/organisms/Sidebar";
+import Header from "@/components/organisms/Header";
 function App() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
@@ -21,8 +23,9 @@ function App() {
     setIsMobileSidebarOpen(false);
   };
 
-  return (
-    <BrowserRouter>
+return (
+    <AuthProvider>
+      <BrowserRouter>
       <div className="min-h-screen bg-slate-50">
         <div className="flex">
           <Sidebar 
@@ -34,14 +37,15 @@ function App() {
             <Header toggleMobileSidebar={toggleMobileSidebar} />
             
             <main className="flex-1 p-6 lg:p-8">
-              <Routes>
-<Route path="/" element={<Dashboard />} />
-<Route path="/agencies" element={<Agencies />} />
-<Route path="/virtual-assistants" element={<VirtualAssistants />} />
-<Route path="/check-ins" element={<CheckIns />} />
-<Route path="/va-requests" element={<VARequests />} />
-<Route path="/agencies/:id" element={<AgencyDetails />} />
-</Routes>
+<Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/agencies" element={<ProtectedRoute><Agencies /></ProtectedRoute>} />
+                <Route path="/virtual-assistants" element={<ProtectedRoute><VirtualAssistants /></ProtectedRoute>} />
+                <Route path="/check-ins" element={<ProtectedRoute><CheckIns /></ProtectedRoute>} />
+                <Route path="/va-requests" element={<ProtectedRoute><VARequests /></ProtectedRoute>} />
+                <Route path="/agencies/:id" element={<ProtectedRoute><AgencyDetails /></ProtectedRoute>} />
+              </Routes>
             </main>
           </div>
         </div>
@@ -59,7 +63,9 @@ function App() {
           style={{ zIndex: 9999 }}
         />
       </div>
-    </BrowserRouter>
+</div>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

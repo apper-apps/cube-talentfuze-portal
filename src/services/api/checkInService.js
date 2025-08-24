@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import checkInsData from "@/services/mockData/checkIns.json";
+import authService from "./authService";
 
 class CheckInService {
   constructor() {
@@ -11,9 +12,21 @@ class CheckInService {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  async getAll() {
+async getAll() {
     await this.delay();
-    return [...this.checkIns].sort((a, b) => new Date(b.date) - new Date(a.date));
+    const user = authService.getCurrentUser();
+    
+    if (!user) return [];
+    
+    let filtered = [...this.checkIns];
+    
+    if (user.role === 'Agency') {
+      filtered = filtered.filter(checkIn => checkIn.agencyId === user.agencyId);
+    } else if (user.role === 'VirtualAssistant') {
+      filtered = filtered.filter(checkIn => checkIn.virtualAssistantId === user.virtualAssistantId);
+    }
+    
+    return filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
   }
 
   async getById(id) {

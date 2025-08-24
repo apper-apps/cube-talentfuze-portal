@@ -1,4 +1,5 @@
 import agenciesData from "@/services/mockData/agencies.json";
+import authService from "./authService";
 
 let agencies = [...agenciesData];
 let nextId = Math.max(...agencies.map(a => a.Id)) + 1;
@@ -34,9 +35,21 @@ let nextSummaryId = Math.max(...monthlySummaries.map(s => s.Id)) + 1;
 const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms));
 
 class AgencyService {
-  async getAll() {
+async getAll() {
     await delay();
-    return [...agencies];
+    const user = authService.getCurrentUser();
+    
+    if (!user) return [];
+    
+    if (user.role === 'TalentFuze') {
+      return [...agencies];
+    } else if (user.role === 'Agency') {
+      return agencies.filter(agency => agency.Id === user.agencyId);
+    } else if (user.role === 'VirtualAssistant') {
+      return agencies.filter(agency => agency.Id === user.agencyId);
+    }
+    
+    return [];
   }
 
   async getById(id) {

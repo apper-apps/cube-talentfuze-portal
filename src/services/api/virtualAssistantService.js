@@ -1,9 +1,10 @@
 import virtualAssistantsData from "@/services/mockData/virtualAssistants.json";
+import authService from "./authService";
 
 class VirtualAssistantService {
   constructor() {
     this.virtualAssistants = [...virtualAssistantsData];
-}
+  }
 
   async getPlacementAnalytics() {
     await this.delay();
@@ -23,9 +24,21 @@ class VirtualAssistantService {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  async getAll() {
+async getAll() {
     await this.delay();
-    return [...this.virtualAssistants];
+    const user = authService.getCurrentUser();
+    
+    if (!user) return [];
+    
+    if (user.role === 'TalentFuze') {
+      return [...this.virtualAssistants];
+    } else if (user.role === 'Agency') {
+      return this.virtualAssistants.filter(va => va.agencyId === user.agencyId);
+    } else if (user.role === 'VirtualAssistant') {
+      return this.virtualAssistants.filter(va => va.Id === user.virtualAssistantId);
+    }
+    
+    return [];
   }
 
   async getById(id) {
@@ -97,11 +110,21 @@ async create(vaData) {
   }
 
   // VA Request methods
-  async getAllRequests() {
+async getAllRequests() {
     await this.delay();
-    // In a real app, this would come from a separate requests endpoint
+    const user = authService.getCurrentUser();
+    
+    if (!user) return [];
+    
     const requests = JSON.parse(localStorage.getItem('vaRequests') || '[]');
-    return requests.map(req => ({ ...req }));
+    
+    if (user.role === 'TalentFuze') {
+      return requests.map(req => ({ ...req }));
+    } else if (user.role === 'Agency') {
+      return requests.filter(req => req.agencyId === user.agencyId).map(req => ({ ...req }));
+    }
+    
+    return [];
   }
 
   async getRequestById(id) {

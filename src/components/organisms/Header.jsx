@@ -1,10 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import ApperIcon from "@/components/ApperIcon";
+import Agencies from "@/components/pages/Agencies";
 import checkInService from "@/services/api/checkInService";
 import agencyService from "@/services/api/agencyService";
 import virtualAssistantService from "@/services/api/virtualAssistantService";
 const Header = ({ toggleMobileSidebar }) => {
+  const { user } = useAuth();
+  
   return (
     <header className="bg-white border-b border-slate-200 px-6 py-4 lg:pl-6 lg:pr-8">
       <div className="flex items-center justify-between">
@@ -32,8 +36,14 @@ const Header = ({ toggleMobileSidebar }) => {
           <div className="w-8 h-8 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center">
             <ApperIcon name="Bell" size={16} className="text-slate-600" />
           </div>
-          <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
-            <ApperIcon name="User" size={16} className="text-white" />
+<div className="flex items-center space-x-3">
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-medium text-gray-900">{user?.name}</p>
+              <p className="text-xs text-gray-500">{user?.role}</p>
+            </div>
+            <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
+              <ApperIcon name="User" size={16} className="text-white" />
+            </div>
           </div>
         </div>
       </div>
@@ -42,8 +52,9 @@ const Header = ({ toggleMobileSidebar }) => {
 };
 
 const GlobalSearch = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState({ agencies: [], vas: [], checkIns: [] });
+  const { user, canViewAgency, canViewVirtualAssistant, canViewCheckIn } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const searchRef = useRef(null);
@@ -69,7 +80,7 @@ const GlobalSearch = () => {
 
       setLoading(true);
       try {
-        const [agencies, vas, checkIns] = await Promise.all([
+const [agencies, vas, checkIns] = await Promise.all([
           agencyService.getAll(),
           virtualAssistantService.getAll(),
           checkInService.getAll()
@@ -78,28 +89,31 @@ const GlobalSearch = () => {
         const term = searchTerm.toLowerCase();
 
         const filteredAgencies = agencies
+          .filter(agency => canViewAgency(agency.Id))
           .filter(agency => 
-            agency.name.toLowerCase().includes(term) ||
-            agency.contactName.toLowerCase().includes(term) ||
-            agency.contactEmail.toLowerCase().includes(term)
+            agency.name?.toLowerCase().includes(term) ||
+            agency.contactName?.toLowerCase().includes(term) ||
+            agency.contactEmail?.toLowerCase().includes(term)
           )
           .slice(0, 3);
 
         const filteredVAs = vas
+          .filter(va => canViewVirtualAssistant(va.Id, va.agencyId))
           .filter(va => 
-            va.name.toLowerCase().includes(term) ||
-            va.email.toLowerCase().includes(term) ||
-            va.skills.some(skill => skill.toLowerCase().includes(term))
+            va.name?.toLowerCase().includes(term) ||
+            va.email?.toLowerCase().includes(term) ||
+            (va.skills && va.skills.some(skill => skill.toLowerCase().includes(term)))
           )
           .slice(0, 3);
 
         const filteredCheckIns = checkIns
+          .filter(checkIn => canViewCheckIn(checkIn))
           .filter(checkIn => {
             const va = vas.find(v => v.Id === checkIn.virtualAssistantId);
             const agency = agencies.find(a => a.Id === checkIn.agencyId);
             return (
-              (va && va.name.toLowerCase().includes(term)) ||
-              (agency && agency.name.toLowerCase().includes(term)) ||
+              (va && va.name?.toLowerCase().includes(term)) ||
+              (agency && agency.name?.toLowerCase().includes(term)) ||
               (checkIn.tasksCompleted && checkIn.tasksCompleted.toLowerCase().includes(term)) ||
               (checkIn.notes && checkIn.notes.toLowerCase().includes(term))
             );
@@ -255,4 +269,5 @@ const GlobalSearch = () => {
     </div>
   );
 };
+
 export default Header;
