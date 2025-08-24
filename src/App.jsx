@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import Login from "@/components/pages/Login";
 import AgencyDetails from "@/components/pages/AgencyDetails";
+import Login from "@/components/pages/Login";
 import CheckIns from "@/components/pages/CheckIns";
 import Agencies from "@/components/pages/Agencies";
 import VARequests from "@/components/pages/VARequests";
@@ -12,6 +11,7 @@ import Dashboard from "@/components/pages/Dashboard";
 import VirtualAssistants from "@/components/pages/VirtualAssistants";
 import Sidebar from "@/components/organisms/Sidebar";
 import Header from "@/components/organisms/Header";
+import { AuthProvider } from "@/contexts/AuthContext";
 function App() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
@@ -50,7 +50,7 @@ return (
           </div>
         </div>
 
-        <ToastContainer
+<ToastContainer
           position="top-right"
           autoClose={3000}
           hideProgressBar={false}
@@ -63,9 +63,7 @@ return (
           style={{ zIndex: 9999 }}
         />
       </div>
-</div>
       </BrowserRouter>
-    </AuthProvider>
   );
 }
 
