@@ -1,17 +1,19 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import ApperIcon from "@/components/ApperIcon";
+import Modal from "@/components/molecules/Modal";
+import Card from "@/components/atoms/Card";
+import Select from "@/components/atoms/Select";
 import Button from "@/components/atoms/Button";
 import Badge from "@/components/atoms/Badge";
-import Card from "@/components/atoms/Card";
-import Modal from "@/components/molecules/Modal";
 import AgencyForm from "@/components/organisms/AgencyForm";
 import InternalEmployeeForm from "@/components/organisms/InternalEmployeeForm";
-import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
-import ApperIcon from "@/components/ApperIcon";
-import agencyService from "@/services/api/agencyService";
+import Loading from "@/components/ui/Loading";
 import employeeService from "@/services/api/employeeService";
+import agencyService from "@/services/api/agencyService";
+import virtualAssistantService from "@/services/api/virtualAssistantService";
 
 const AgencyDetails = () => {
   const { id } = useParams();
@@ -25,9 +27,16 @@ const [agency, setAgency] = useState(null);
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [employees, setEmployees] = useState([]);
   const [employeeFormLoading, setEmployeeFormLoading] = useState(false);
-useEffect(() => {
+  const [virtualAssistants, setVirtualAssistants] = useState([]);
+  const [vaLoading, setVaLoading] = useState(true);
+  const [isVaAssignModalOpen, setIsVaAssignModalOpen] = useState(false);
+  const [unassignedVAs, setUnassignedVAs] = useState([]);
+  const [vaAssignLoading, setVaAssignLoading] = useState(false);
+
+  useEffect(() => {
     loadAgency();
     loadEmployees();
+    loadVirtualAssistants();
   }, [id]);
 
   const loadEmployees = async () => {
@@ -88,6 +97,75 @@ useEffect(() => {
   const handleCloseEmployeeModal = () => {
     setIsEmployeeModalOpen(false);
     setEditingEmployee(null);
+};
+
+  const loadVirtualAssistants = async () => {
+    try {
+      setVaLoading(true);
+      const vaData = await virtualAssistantService.getByAgencyId(id);
+      setVirtualAssistants(vaData);
+    } catch (err) {
+      console.error("Error loading virtual assistants:", err);
+      toast.error("Failed to load virtual assistants");
+    } finally {
+      setVaLoading(false);
+    }
+  };
+
+  const handleAssignVA = async () => {
+    try {
+      setVaAssignLoading(true);
+      const unassigned = await virtualAssistantService.getUnassignedVAs();
+      setUnassignedVAs(unassigned);
+      setIsVaAssignModalOpen(true);
+    } catch (err) {
+      toast.error("Failed to load available VAs");
+    } finally {
+      setVaAssignLoading(false);
+    }
+  };
+
+  const handleVAAssignment = async (vaId) => {
+    try {
+      setVaAssignLoading(true);
+      await virtualAssistantService.assignToAgency(vaId, parseInt(id));
+      toast.success("Virtual Assistant assigned successfully");
+      setIsVaAssignModalOpen(false);
+      await loadVirtualAssistants();
+    } catch (err) {
+      toast.error("Failed to assign Virtual Assistant");
+    } finally {
+      setVaAssignLoading(false);
+    }
+  };
+
+  const handleUnassignVA = async (vaId, vaName) => {
+    if (window.confirm(`Are you sure you want to unassign ${vaName} from this agency?`)) {
+      try {
+        await virtualAssistantService.assignToAgency(vaId, null);
+        toast.success(`${vaName} has been unassigned successfully`);
+        await loadVirtualAssistants();
+      } catch (err) {
+        toast.error("Failed to unassign Virtual Assistant");
+      }
+    }
+  };
+
+  const getVARole = (skills) => {
+    if (!skills || skills.length === 0) return "General VA";
+    return skills[0]; // Use first skill as primary role
+  };
+
+  const formatDate = (dateString) => {
+    try {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch {
+      return 'N/A';
+    }
   };
 
   const getAccessLevelBadgeVariant = (accessLevel) => {
@@ -375,26 +453,32 @@ const handleBackToList = () => {
           <Card className="p-6">
             <h3 className="text-lg font-semibold text-slate-900 mb-4">Quick Stats</h3>
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
+<div className="flex justify-between items-center">
                 <span className="text-slate-600">Total VAs</span>
-                <span className="text-xl font-bold text-slate-900">{agency.vaCount || 0}</span>
+                <span className="text-xl font-bold text-slate-900">{virtualAssistants.length || 0}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-slate-600">Status</span>
-                <Badge variant={agency.status === "active" ? "success" : "secondary"}>
-                  {agency.status === "active" ? "Active" : "Inactive"}
-                </Badge>
+                <span className="text-slate-600">Internal Staff</span>
+                <span className="text-xl font-bold text-slate-900">{employees.length || 0}</span>
               </div>
             </div>
           </Card>
+        </div>
+      </div>
+{/* Assigned VAs Section */}
+      <div className="grid grid-cols-1 gap-8">
+        <Card className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-slate-900">Assigned Virtual Assistants</h3>
+            <Button onClick={handleAssignVA} size="sm" className="flex items-center gap-2">
+              <ApperIcon name="UserPlus" size={16} />
+              Assign VA
+            </Button>
+          </div>
 
-          {/* Assigned VAs Card */}
-          <Card className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-slate-900">Assigned VAs</h3>
-              <ApperIcon name="Users" size={20} className="text-slate-400" />
-            </div>
-            
+          {vaLoading ? (
+            <Loading rows={3} />
+          ) : virtualAssistants.length === 0 ? (
             <div className="text-center py-8">
               <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <ApperIcon name="Users" size={32} className="text-slate-400" />
@@ -404,10 +488,55 @@ const handleBackToList = () => {
                 Virtual assistants will appear here when assigned to this agency.
               </p>
             </div>
-          </Card>
-        </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-slate-200">
+                    <th className="text-left py-3 px-4 font-semibold text-slate-900">Name</th>
+                    <th className="text-left py-3 px-4 font-semibold text-slate-900">Primary Role</th>
+                    <th className="text-left py-3 px-4 font-semibold text-slate-900">Start Date</th>
+                    <th className="text-left py-3 px-4 font-semibold text-slate-900">Status</th>
+                    <th className="text-left py-3 px-4 font-semibold text-slate-900">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {virtualAssistants.map((va) => (
+                    <tr key={va.Id} className="border-b border-slate-100 hover:bg-slate-50">
+                      <td className="py-3 px-4">
+                        <div>
+                          <div className="font-medium text-slate-900">{va.name}</div>
+                          <div className="text-sm text-slate-500">{va.email}</div>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className="text-slate-700">{getVARole(va.skills)}</span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className="text-slate-700">{formatDate(va.startDate)}</span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <Badge variant={va.status}>{va.status}</Badge>
+                      </td>
+                      <td className="py-3 px-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleUnassignVA(va.Id, va.name)}
+                          className="text-error hover:text-error hover:border-error"
+                        >
+                          <ApperIcon name="UserMinus" size={14} className="mr-1" />
+                          Unassign
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Card>
       </div>
-
 {/* Edit Modal */}
       <Modal
         isOpen={isEditModalOpen}
@@ -436,6 +565,60 @@ const handleBackToList = () => {
           onCancel={handleCloseEmployeeModal}
           loading={employeeFormLoading}
         />
+</Modal>
+
+      {/* VA Assignment Modal */}
+      <Modal
+        isOpen={isVaAssignModalOpen}
+        onClose={() => setIsVaAssignModalOpen(false)}
+        title="Assign Virtual Assistant"
+        size="lg"
+      >
+        <div className="space-y-4">
+          {vaAssignLoading ? (
+            <Loading rows={3} />
+          ) : unassignedVAs.length === 0 ? (
+            <div className="text-center py-8">
+              <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <ApperIcon name="Users" size={32} className="text-slate-400" />
+              </div>
+              <p className="text-slate-600 mb-2">No unassigned VAs available</p>
+              <p className="text-sm text-slate-500">
+                All virtual assistants are currently assigned to agencies.
+              </p>
+            </div>
+          ) : (
+            <>
+              <p className="text-slate-600 mb-4">
+                Select a virtual assistant to assign to this agency:
+              </p>
+              <div className="max-h-96 overflow-y-auto space-y-2">
+                {unassignedVAs.map((va) => (
+                  <div
+                    key={va.Id}
+                    className="border border-slate-200 rounded-lg p-4 hover:border-primary hover:bg-blue-50 cursor-pointer transition-colors"
+                    onClick={() => handleVAAssignment(va.Id)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium text-slate-900">{va.name}</div>
+                        <div className="text-sm text-slate-500">{va.email}</div>
+                        <div className="text-sm text-slate-600 mt-1">
+                          Primary Skills: {va.skills?.slice(0, 2).join(", ")}
+                          {va.skills?.length > 2 && ` (+${va.skills.length - 2} more)`}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={va.status}>{va.status}</Badge>
+                        <ApperIcon name="ChevronRight" size={16} className="text-slate-400" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
       </Modal>
     </div>
   );

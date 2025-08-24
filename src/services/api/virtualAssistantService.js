@@ -23,11 +23,31 @@ class VirtualAssistantService {
     return { ...va };
   }
 
-  async getByAgencyId(agencyId) {
+async getByAgencyId(agencyId) {
     await this.delay();
     return this.virtualAssistants.filter(va => va.agencyId === parseInt(agencyId));
   }
 
+  async getUnassignedVAs() {
+    await this.delay();
+    return this.virtualAssistants.filter(va => !va.agencyId || va.status === 'available');
+  }
+
+  async assignToAgency(vaId, agencyId) {
+    await this.delay(400);
+    const index = this.virtualAssistants.findIndex(va => va.Id === parseInt(vaId));
+    if (index === -1) {
+      throw new Error("Virtual Assistant not found");
+    }
+    
+    this.virtualAssistants[index] = {
+      ...this.virtualAssistants[index],
+      agencyId: agencyId ? parseInt(agencyId) : null,
+      status: agencyId ? 'assigned' : 'available'
+    };
+    
+    return { ...this.virtualAssistants[index] };
+  }
 async create(vaData) {
     await this.delay(400);
     const maxId = Math.max(...this.virtualAssistants.map(va => va.Id), 0);
