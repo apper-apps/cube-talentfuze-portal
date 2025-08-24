@@ -111,9 +111,9 @@ setEditingAgency(null);
     navigate(`/agencies/${agency.Id}`);
   };
 
-  return (
-<div className="p-4 sm:p-6">
-<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
+return (
+    <div className="p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">Agencies</h1>
           <p className="text-slate-600 mt-2">Manage your partner agencies</p>
@@ -123,7 +123,6 @@ setEditingAgency(null);
           Add Agency
         </Button>
       </div>
-</div>
 
       {/* Filters */}
       <Card className="p-6 mb-6">
