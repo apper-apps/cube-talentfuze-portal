@@ -1,8 +1,8 @@
-import agenciesData from "@/services/mockData/agencies.json";
 import authService from "./authService";
+import agenciesData from "@/services/mockData/agencies.json";
 
 let agencies = [...agenciesData];
-let nextId = Math.max(...agencies.map(a => a.Id)) + 1;
+let nextId = agencies.length > 0 ? Math.max(...agencies.map(a => a.Id)) + 1 : 1;
 
 // Mock data for monthly summaries
 let monthlySummaries = [
@@ -68,10 +68,11 @@ async getAll() {
       ...agencyData,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
-    };
-    agencies.push(newAgency);
-    return { ...newAgency };
-  }
+};
+agencies.push(newAgency);
+nextId++;
+return { ...newAgency };
+}
 
   async update(id, agencyData) {
     await delay();
@@ -79,7 +80,7 @@ async getAll() {
     if (index === -1) {
       throw new Error("Agency not found");
     }
-    agencies[index] = {
+agencies[index] = {
       ...agencies[index],
       ...agencyData,
       updatedAt: new Date().toISOString()
