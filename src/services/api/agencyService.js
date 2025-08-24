@@ -125,8 +125,20 @@ class AgencyService {
     if (index === -1) {
       throw new Error("Monthly summary not found");
     }
-    monthlySummaries.splice(index, 1);
+monthlySummaries.splice(index, 1);
     return true;
+  }
+
+  // Analytics methods
+  async getRevenueAnalytics() {
+    await delay();
+    return {
+      totalRevenue: 125000,
+      monthlyGrowth: 18,
+      topPerformingAgencies: agencies
+        .filter(agency => agency.status === 'active')
+        .slice(0, 3)
+    };
   }
 }
 

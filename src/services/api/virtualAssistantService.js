@@ -3,6 +3,20 @@ import virtualAssistantsData from "@/services/mockData/virtualAssistants.json";
 class VirtualAssistantService {
   constructor() {
     this.virtualAssistants = [...virtualAssistantsData];
+}
+
+  async getPlacementAnalytics() {
+    await this.delay();
+    const assigned = this.virtualAssistants.filter(va => va.status === 'assigned');
+    const available = this.virtualAssistants.filter(va => va.status === 'available');
+    const inactive = this.virtualAssistants.filter(va => va.status === 'inactive');
+    
+    return {
+      placementRate: Math.round((assigned.length / this.virtualAssistants.length) * 100),
+      assignedCount: assigned.length,
+      availableCount: available.length,
+      inactiveCount: inactive.length
+    };
   }
 
   async delay(ms = 300) {

@@ -81,11 +81,30 @@ class CheckInService {
     return true;
   }
 
-  async getRecentCheckIns(limit = 10) {
+async getRecentCheckIns(limit = 10) {
     await this.delay();
     return this.checkIns
       .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
       .slice(0, limit);
+  }
+
+  async getMonthlyStats() {
+    await this.delay();
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+    
+    const monthlyCheckIns = this.checkIns.filter(checkIn => {
+      const checkInDate = new Date(checkIn.submittedAt);
+      return checkInDate.getMonth() === currentMonth && checkInDate.getFullYear() === currentYear;
+    });
+
+    const totalHours = monthlyCheckIns.reduce((sum, checkIn) => sum + checkIn.hoursWorked, 0);
+    
+    return {
+      totalCheckIns: monthlyCheckIns.length,
+      totalHours,
+      averageHoursPerCheckIn: monthlyCheckIns.length > 0 ? (totalHours / monthlyCheckIns.length).toFixed(1) : 0
+    };
   }
 
   async getCheckInsByDateRange(startDate, endDate, agencyId = null, vaId = null) {
