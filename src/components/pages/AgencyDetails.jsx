@@ -193,7 +193,15 @@ const AgencyDetails = () => {
                   </a>
                 </p>
               </div>
-              
+<div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Company Address
+                </label>
+                <p className="text-base text-slate-900">
+                  {agency.address || "Not provided"}
+                </p>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Created Date

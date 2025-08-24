@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import Button from "@/components/atoms/Button";
 import SearchBar from "@/components/molecules/SearchBar";
 import Modal from "@/components/molecules/Modal";
@@ -9,36 +10,23 @@ import ApperIcon from "@/components/ApperIcon";
 import agencyService from "@/services/api/agencyService";
 
 const Agencies = () => {
+  const navigate = useNavigate();
   const [agencies, setAgencies] = useState([]);
   const [filteredAgencies, setFilteredAgencies] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAgency, setEditingAgency] = useState(null);
-const [formLoading, setFormLoading] = useState(false);
-  const navigate = useNavigate();
 
-  const loadAgencies = async () => {
-    try {
-      setError("");
-      setLoading(true);
-      const data = await agencyService.getAll();
-      setAgencies(data);
-      setFilteredAgencies(data);
-    } catch (err) {
-      setError("Failed to load agencies. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Load agencies on component mount
   useEffect(() => {
     loadAgencies();
   }, []);
 
+  // Filter agencies based on search term
   useEffect(() => {
-    const filtered = agencies.filter(agency =>
+    const filtered = agencies.filter((agency) =>
       agency.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       agency.contactName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       agency.contactEmail.toLowerCase().includes(searchTerm.toLowerCase())
@@ -46,59 +34,76 @@ const [formLoading, setFormLoading] = useState(false);
     setFilteredAgencies(filtered);
   }, [agencies, searchTerm]);
 
+  const loadAgencies = async () => {
+    try {
+      setLoading(true);
+      const data = await agencyService.getAll();
+      setAgencies(data);
+      setError(null);
+    } catch (err) {
+      setError("Failed to load agencies");
+      console.error("Error loading agencies:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleAddAgency = () => {
-    setEditingAgency(null);
-    setShowModal(true);
+setEditingAgency(null);
+    setIsModalOpen(true);
   };
 
   const handleEditAgency = (agency) => {
     setEditingAgency(agency);
-    setShowModal(true);
+    setIsModalOpen(true);
   };
 
   const handleSaveAgency = async (formData) => {
     try {
-      setFormLoading(true);
-      
       if (editingAgency) {
-        const updatedAgency = await agencyService.update(editingAgency.Id, formData);
-        setAgencies(prev => prev.map(agency => 
-          agency.Id === editingAgency.Id ? updatedAgency : agency
-        ));
+        // Update existing agency
+        await agencyService.update(editingAgency.Id, formData);
+        toast.success("Agency updated successfully");
       } else {
-        const newAgency = await agencyService.create(formData);
-        setAgencies(prev => [...prev, newAgency]);
+        // Create new agency
+        await agencyService.create(formData);
+        toast.success("Agency created successfully");
       }
       
-      setShowModal(false);
-      setEditingAgency(null);
+      // Refresh the agencies list
+      await loadAgencies();
+      handleCloseModal();
     } catch (error) {
-      throw error;
-    } finally {
-      setFormLoading(false);
+      toast.error("Failed to save agency");
+      console.error("Error saving agency:", error);
     }
   };
 
   const handleDeleteAgency = async (agencyId) => {
-    await agencyService.delete(agencyId);
-    setAgencies(prev => prev.filter(agency => agency.Id !== agencyId));
+    try {
+      await agencyService.delete(agencyId);
+      toast.success("Agency deleted successfully");
+      await loadAgencies();
+    } catch (error) {
+      toast.error("Failed to delete agency");
+      console.error("Error deleting agency:", error);
+    }
   };
 
   const handleCloseModal = () => {
-    setShowModal(false);
+    setIsModalOpen(false);
     setEditingAgency(null);
-};
+  };
 
   const handleViewAgency = (agency) => {
     navigate(`/agencies/${agency.Id}`);
   };
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+return (
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">Agencies</h1>
-          <p className="text-slate-600 mt-1">Manage your agency partners and their information</p>
+          <p className="text-slate-600 mt-2">Manage your partner agencies</p>
         </div>
         <Button onClick={handleAddAgency} className="flex items-center gap-2">
           <ApperIcon name="Plus" size={20} />
@@ -106,30 +111,25 @@ const [formLoading, setFormLoading] = useState(false);
         </Button>
       </div>
 
-      {/* Search Bar */}
-      <div className="max-w-md">
+      <div className="mb-6">
         <SearchBar
+          placeholder="Search agencies..."
           value={searchTerm}
           onChange={setSearchTerm}
-          placeholder="Search agencies..."
         />
       </div>
 
-      {/* Agency Table */}
-<AgencyTable
+      <AgencyTable
         agencies={filteredAgencies}
         loading={loading}
         error={error}
-        onRefresh={loadAgencies}
         onEdit={handleEditAgency}
         onDelete={handleDeleteAgency}
-        onAdd={handleAddAgency}
         onView={handleViewAgency}
       />
 
-      {/* Add/Edit Modal */}
       <Modal
-        isOpen={showModal}
+        isOpen={isModalOpen}
         onClose={handleCloseModal}
         title={editingAgency ? "Edit Agency" : "Add New Agency"}
         size="lg"
@@ -138,7 +138,6 @@ const [formLoading, setFormLoading] = useState(false);
           agency={editingAgency}
           onSave={handleSaveAgency}
           onCancel={handleCloseModal}
-          loading={formLoading}
         />
       </Modal>
     </div>

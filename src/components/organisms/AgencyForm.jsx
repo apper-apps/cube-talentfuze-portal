@@ -6,11 +6,12 @@ import Select from "@/components/atoms/Select";
 import ApperIcon from "@/components/ApperIcon";
 
 const AgencyForm = ({ agency, onSave, onCancel, loading = false }) => {
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     name: agency?.name || "",
     contactName: agency?.contactName || "",
     contactEmail: agency?.contactEmail || "",
     phone: agency?.phone || "",
+    address: agency?.address || "",
     status: agency?.status || "active"
   });
 
@@ -37,9 +38,12 @@ const AgencyForm = ({ agency, onSave, onCancel, loading = false }) => {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contactEmail)) {
       newErrors.contactEmail = "Please enter a valid email address";
     }
-
-    if (!formData.phone.trim()) {
+if (!formData.phone.trim()) {
       newErrors.phone = "Phone number is required";
+    }
+
+    if (!formData.address.trim()) {
+      newErrors.address = "Company address is required";
     }
 
     setErrors(newErrors);
@@ -110,6 +114,18 @@ const AgencyForm = ({ agency, onSave, onCancel, loading = false }) => {
           error={errors.phone}
           placeholder="Enter phone number"
           required
+/>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-2">
+          Company Address
+        </label>
+        <Input
+          placeholder="Enter company address"
+          value={formData.address}
+          onChange={(e) => handleChange("address", e.target.value)}
+          error={errors.address}
         />
       </div>
 

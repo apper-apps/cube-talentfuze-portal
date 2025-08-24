@@ -1,26 +1,25 @@
-import { useState } from "react";
-import { cn } from "@/utils/cn";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
+import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
+import Card from "@/components/atoms/Card";
 import Button from "@/components/atoms/Button";
 import Badge from "@/components/atoms/Badge";
-import Card from "@/components/atoms/Card";
-import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
+import Loading from "@/components/ui/Loading";
 
 const AgencyTable = ({ 
-  agencies, 
+  agencies = [], 
   loading, 
   error, 
-  onRefresh, 
   onEdit, 
-  onDelete,
-  onAdd,
+  onDelete, 
   onView 
 }) => {
   const [sortField, setSortField] = useState("name");
   const [sortDirection, setSortDirection] = useState("asc");
+  const [deletingId, setDeletingId] = useState(null);
 
   const handleSort = (field) => {
     if (sortField === field) {
@@ -33,15 +32,22 @@ const AgencyTable = ({
 
   const handleDelete = async (agency) => {
     if (window.confirm(`Are you sure you want to delete ${agency.name}?`)) {
+      setDeletingId(agency.Id);
       try {
         await onDelete(agency.Id);
-        toast.success(`${agency.name} has been deleted successfully`);
       } catch (error) {
-        toast.error("Failed to delete agency. Please try again.");
+        toast.error("Failed to delete agency");
+      } finally {
+        setDeletingId(null);
       }
     }
   };
 
+  const getSortIcon = (field) => {
+    if (sortField !== field) return "ArrowUpDown";
+    return sortDirection === "asc" ? "ArrowUp" : "ArrowDown";
+  };
+// Sort agencies
   const sortedAgencies = [...agencies].sort((a, b) => {
     let aValue = a[sortField];
     let bValue = b[sortField];
@@ -58,141 +64,101 @@ const AgencyTable = ({
     }
   });
 
-  if (loading) {
-    return (
-      <Card className="p-6">
-        <Loading rows={6} />
-      </Card>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card className="p-6">
-        <Error message={error} onRetry={onRefresh} />
-      </Card>
-    );
-  }
-
-  if (!agencies.length) {
-    return (
-      <Card className="p-6">
-        <Empty 
-          title="No agencies found"
-          description="Get started by adding your first agency partner. You can manage their information and track their virtual assistants all in one place."
-          actionLabel="Add Agency"
-          onAction={onAdd}
-          icon="Building2"
-        />
-      </Card>
-    );
-  }
-
-  const getSortIcon = (field) => {
-    if (sortField !== field) return "ArrowUpDown";
-    return sortDirection === "asc" ? "ArrowUp" : "ArrowDown";
-  };
+  if (loading) return <Loading />;
+  if (error) return <Error message={error} />;
+  if (!agencies.length) return <Empty message="No agencies found" />;
 
   return (
-    <Card className="overflow-hidden">
+    <Card>
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
+          <thead className="bg-slate-50 border-b border-slate-200">
             <tr>
-              <th 
-                className="text-left px-6 py-4 font-semibold text-slate-700 cursor-pointer hover:bg-slate-100 transition-colors"
-                onClick={() => handleSort("name")}
-              >
-                <div className="flex items-center gap-2">
+              <th className="text-left p-4">
+                <button
+                  onClick={() => handleSort("name")}
+                  className="flex items-center gap-2 font-semibold text-slate-700 hover:text-slate-900"
+                >
                   Agency Name
                   <ApperIcon name={getSortIcon("name")} size={16} />
-                </div>
+                </button>
               </th>
-              <th 
-                className="text-left px-6 py-4 font-semibold text-slate-700 cursor-pointer hover:bg-slate-100 transition-colors"
-                onClick={() => handleSort("contactName")}
-              >
-                <div className="flex items-center gap-2">
-                  Contact Person
+              <th className="text-left p-4">
+                <button
+                  onClick={() => handleSort("contactName")}
+                  className="flex items-center gap-2 font-semibold text-slate-700 hover:text-slate-900"
+                >
+                  Primary Contact
                   <ApperIcon name={getSortIcon("contactName")} size={16} />
-                </div>
+                </button>
               </th>
-              <th className="text-left px-6 py-4 font-semibold text-slate-700">
-                Contact Info
+              <th className="text-left p-4 font-semibold text-slate-700">
+                Contact Email
               </th>
-              <th 
-                className="text-left px-6 py-4 font-semibold text-slate-700 cursor-pointer hover:bg-slate-100 transition-colors"
-                onClick={() => handleSort("status")}
-              >
-                <div className="flex items-center gap-2">
+              <th className="text-left p-4 font-semibold text-slate-700">
+                Phone
+</th>
+              <th className="text-left p-4">
+                <button
+                  onClick={() => handleSort("status")}
+                  className="flex items-center gap-2 font-semibold text-slate-700 hover:text-slate-900"
+                >
                   Status
                   <ApperIcon name={getSortIcon("status")} size={16} />
-                </div>
+                </button>
               </th>
-              <th 
-                className="text-left px-6 py-4 font-semibold text-slate-700 cursor-pointer hover:bg-slate-100 transition-colors"
-                onClick={() => handleSort("vaCount")}
-              >
-                <div className="flex items-center gap-2">
-                  VAs
-                  <ApperIcon name={getSortIcon("vaCount")} size={16} />
-                </div>
-              </th>
-              <th className="text-center px-6 py-4 font-semibold text-slate-700">
+              <th className="text-right p-4 font-semibold text-slate-700">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody>
-            {sortedAgencies.map((agency, index) => (
-<tr 
-                key={agency.Id}
-                onClick={() => onView(agency)}
-                className={cn(
-                  "border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer",
-                  index % 2 === 0 ? "bg-white" : "bg-slate-25"
-                )}
+          <tbody className="divide-y divide-slate-200">
+            {sortedAgencies.map((agency) => (
+              <tr 
+                key={agency.Id} 
+                className="hover:bg-slate-50 transition-colors"
               >
-                <td className="px-6 py-4">
-                  <div className="font-semibold text-slate-900">{agency.name}</div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-slate-700">{agency.contactName}</div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-sm space-y-1">
-                    <div className="flex items-center gap-2 text-slate-600">
-                      <ApperIcon name="Mail" size={14} />
-                      {agency.contactEmail}
-                    </div>
-                    <div className="flex items-center gap-2 text-slate-600">
-                      <ApperIcon name="Phone" size={14} />
-                      {agency.phone}
-                    </div>
+                <td className="p-4">
+                  <div className="font-semibold text-slate-900">
+                    {agency.name}
                   </div>
                 </td>
-                <td className="px-6 py-4">
-                  <Badge variant={agency.status}>
-                    {agency.status.charAt(0).toUpperCase() + agency.status.slice(1)}
+                <td className="p-4">
+                  <div className="text-slate-700">
+                    {agency.contactName}
+                  </div>
+                </td>
+                <td className="p-4">
+                  <div className="text-slate-700">
+                    {agency.contactEmail}
+                  </div>
+                </td>
+                <td className="p-4">
+                  <div className="text-slate-700">
+                    {agency.phone}
+                  </div>
+                </td>
+                <td className="p-4">
+                  <Badge
+                    variant={agency.status === "active" ? "success" : "secondary"}
+                  >
+                    {agency.status === "active" ? "Active" : "Inactive"}
                   </Badge>
                 </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-gradient-to-r from-accent to-blue-500 rounded-full flex items-center justify-center">
-                      <span className="text-xs font-bold text-white">{agency.vaCount}</span>
-                    </div>
-                    <span className="text-sm text-slate-600">VAs</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center justify-center gap-2">
-<Button
+<td className="p-4">
+                  <div className="flex items-center justify-end gap-2">
+                    <Button
                       variant="secondary"
                       size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onEdit(agency);
-                      }}
+                      onClick={() => onView(agency)}
+                      className="p-2"
+                    >
+                      <ApperIcon name="Eye" size={16} />
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => onEdit(agency)}
                       className="p-2"
                     >
                       <ApperIcon name="Edit" size={16} />
@@ -200,13 +166,15 @@ const AgencyTable = ({
                     <Button
                       variant="danger"
                       size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete(agency);
-                      }}
+                      onClick={() => handleDelete(agency)}
+                      disabled={deletingId === agency.Id}
                       className="p-2"
                     >
-                      <ApperIcon name="Trash2" size={16} />
+                      {deletingId === agency.Id ? (
+                        <ApperIcon name="Loader2" size={16} className="animate-spin" />
+                      ) : (
+                        <ApperIcon name="Trash2" size={16} />
+                      )}
                     </Button>
                   </div>
                 </td>

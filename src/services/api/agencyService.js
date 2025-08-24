@@ -1,22 +1,20 @@
 import agenciesData from "@/services/mockData/agencies.json";
 
+let agencies = [...agenciesData];
+let nextId = Math.max(...agencies.map(a => a.Id)) + 1;
+
+// Simulate API delay
+const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms));
+
 class AgencyService {
-  constructor() {
-    this.agencies = [...agenciesData];
-  }
-
-  async delay(ms = 300) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
   async getAll() {
-    await this.delay();
-    return [...this.agencies];
+    await delay();
+    return [...agencies];
   }
 
   async getById(id) {
-    await this.delay();
-    const agency = this.agencies.find(agency => agency.Id === parseInt(id));
+    await delay();
+    const agency = agencies.find(a => a.Id === parseInt(id));
     if (!agency) {
       throw new Error("Agency not found");
     }
@@ -24,38 +22,38 @@ class AgencyService {
   }
 
   async create(agencyData) {
-    await this.delay(400);
-    const maxId = Math.max(...this.agencies.map(a => a.Id), 0);
+    await delay();
     const newAgency = {
-      Id: maxId + 1,
+      Id: nextId++,
       ...agencyData,
       createdAt: new Date().toISOString(),
-      vaCount: 0
+      updatedAt: new Date().toISOString()
     };
-    this.agencies.push(newAgency);
+    agencies.push(newAgency);
     return { ...newAgency };
   }
 
   async update(id, agencyData) {
-    await this.delay(400);
-    const index = this.agencies.findIndex(agency => agency.Id === parseInt(id));
+    await delay();
+    const index = agencies.findIndex(a => a.Id === parseInt(id));
     if (index === -1) {
       throw new Error("Agency not found");
     }
-    this.agencies[index] = {
-      ...this.agencies[index],
-      ...agencyData
+    agencies[index] = {
+      ...agencies[index],
+      ...agencyData,
+      updatedAt: new Date().toISOString()
     };
-    return { ...this.agencies[index] };
+    return { ...agencies[index] };
   }
 
   async delete(id) {
-    await this.delay(300);
-    const index = this.agencies.findIndex(agency => agency.Id === parseInt(id));
+await delay();
+    const index = agencies.findIndex(a => a.Id === parseInt(id));
     if (index === -1) {
       throw new Error("Agency not found");
     }
-    this.agencies.splice(index, 1);
+    agencies.splice(index, 1);
     return true;
   }
 }

@@ -1,52 +1,57 @@
 [
   {
     "Id": 1,
-    "name": "Digital Marketing Pro",
+    "name": "Digital Marketing Solutions",
     "contactName": "Sarah Johnson",
-    "contactEmail": "sarah.johnson@digitalmarketingpro.com",
+    "contactEmail": "sarah.johnson@digitalms.com",
     "phone": "+1 (555) 123-4567",
+    "address": "123 Business Ave, Suite 100, New York, NY 10001",
     "status": "active",
     "createdAt": "2024-01-15T10:30:00Z",
-    "vaCount": 3
+    "updatedAt": "2024-01-15T10:30:00Z"
   },
   {
     "Id": 2,
-    "name": "Tech Solutions Inc.",
+    "name": "Creative Partners Agency",
     "contactName": "Michael Chen",
-    "contactEmail": "michael.chen@techsolutions.com",
-    "phone": "+1 (555) 987-6543",
+    "contactEmail": "m.chen@creativepartners.com",
+    "phone": "+1 (555) 234-5678",
+    "address": "456 Innovation Drive, San Francisco, CA 94105",
     "status": "active",
-    "createdAt": "2024-01-20T14:45:00Z",
-    "vaCount": 2
+    "createdAt": "2024-02-01T14:15:00Z",
+    "updatedAt": "2024-02-01T14:15:00Z"
   },
   {
     "Id": 3,
-    "name": "Creative Studio",
-    "contactName": "Emily Rodriguez",
-    "contactEmail": "emily.rodriguez@creativestudio.com",
-    "phone": "+1 (555) 456-7890",
-    "status": "active",
-    "createdAt": "2024-02-01T09:15:00Z",
-    "vaCount": 4
+    "name": "Strategic Communications LLC",
+    "contactName": "Jennifer Davis",
+    "contactEmail": "jennifer.davis@stratcomm.com",
+    "phone": "+1 (555) 345-6789",
+    "address": "789 Corporate Blvd, Chicago, IL 60601",
+    "status": "inactive",
+    "createdAt": "2024-01-28T09:45:00Z",
+    "updatedAt": "2024-03-15T16:20:00Z"
   },
   {
     "Id": 4,
-    "name": "Business Consultants LLC",
-    "contactName": "David Thompson",
-    "contactEmail": "david.thompson@businessconsultants.com",
-    "phone": "+1 (555) 789-0123",
-    "status": "inactive",
-    "createdAt": "2024-01-10T16:20:00Z",
-    "vaCount": 1
+    "name": "Growth Marketing Collective",
+    "contactName": "David Rodriguez",
+    "contactEmail": "david.r@growthmc.com",
+    "phone": "+1 (555) 456-7890",
+    "address": "321 Startup Street, Austin, TX 73301",
+    "status": "active",
+    "createdAt": "2024-02-10T11:20:00Z",
+    "updatedAt": "2024-02-10T11:20:00Z"
   },
   {
     "Id": 5,
-    "name": "Web Development Agency",
-    "contactName": "Lisa Park",
-    "contactEmail": "lisa.park@webdevagency.com",
-    "phone": "+1 (555) 234-5678",
+    "name": "Brand Excellence Partners",
+    "contactName": "Lisa Thompson",
+    "contactEmail": "lisa.thompson@brandexcellence.com",
+    "phone": "+1 (555) 567-8901",
+    "address": "654 Excellence Way, Miami, FL 33101",
     "status": "active",
-    "createdAt": "2024-02-10T11:30:00Z",
-    "vaCount": 5
+    "createdAt": "2024-03-01T13:10:00Z",
+    "updatedAt": "2024-03-01T13:10:00Z"
   }
 ]
