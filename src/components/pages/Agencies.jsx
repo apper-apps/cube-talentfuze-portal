@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "@/components/atoms/Button";
 import SearchBar from "@/components/molecules/SearchBar";
 import Modal from "@/components/molecules/Modal";
@@ -15,7 +16,8 @@ const Agencies = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingAgency, setEditingAgency] = useState(null);
-  const [formLoading, setFormLoading] = useState(false);
+const [formLoading, setFormLoading] = useState(false);
+  const navigate = useNavigate();
 
   const loadAgencies = async () => {
     try {
@@ -85,8 +87,11 @@ const Agencies = () => {
   const handleCloseModal = () => {
     setShowModal(false);
     setEditingAgency(null);
-  };
+};
 
+  const handleViewAgency = (agency) => {
+    navigate(`/agencies/${agency.Id}`);
+  };
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -111,7 +116,7 @@ const Agencies = () => {
       </div>
 
       {/* Agency Table */}
-      <AgencyTable
+<AgencyTable
         agencies={filteredAgencies}
         loading={loading}
         error={error}
@@ -119,6 +124,7 @@ const Agencies = () => {
         onEdit={handleEditAgency}
         onDelete={handleDeleteAgency}
         onAdd={handleAddAgency}
+        onView={handleViewAgency}
       />
 
       {/* Add/Edit Modal */}

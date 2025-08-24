@@ -16,7 +16,8 @@ const AgencyTable = ({
   onRefresh, 
   onEdit, 
   onDelete,
-  onAdd 
+  onAdd,
+  onView 
 }) => {
   const [sortField, setSortField] = useState("name");
   const [sortDirection, setSortDirection] = useState("asc");
@@ -144,10 +145,11 @@ const AgencyTable = ({
           </thead>
           <tbody>
             {sortedAgencies.map((agency, index) => (
-              <tr 
+<tr 
                 key={agency.Id}
+                onClick={() => onView(agency)}
                 className={cn(
-                  "border-b border-slate-100 hover:bg-slate-50 transition-colors",
+                  "border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer",
                   index % 2 === 0 ? "bg-white" : "bg-slate-25"
                 )}
               >
@@ -184,10 +186,13 @@ const AgencyTable = ({
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center justify-center gap-2">
-                    <Button
+<Button
                       variant="secondary"
                       size="sm"
-                      onClick={() => onEdit(agency)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(agency);
+                      }}
                       className="p-2"
                     >
                       <ApperIcon name="Edit" size={16} />
@@ -195,7 +200,10 @@ const AgencyTable = ({
                     <Button
                       variant="danger"
                       size="sm"
-                      onClick={() => handleDelete(agency)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(agency);
+                      }}
                       className="p-2"
                     >
                       <ApperIcon name="Trash2" size={16} />

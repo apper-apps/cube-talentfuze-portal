@@ -6,6 +6,7 @@ import Sidebar from "@/components/organisms/Sidebar";
 import Dashboard from "@/components/pages/Dashboard";
 import Agencies from "@/components/pages/Agencies";
 import VirtualAssistants from "@/components/pages/VirtualAssistants";
+import AgencyDetails from "@/components/pages/AgencyDetails";
 
 function App() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -34,7 +35,8 @@ function App() {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/agencies" element={<Agencies />} />
-                <Route path="/virtual-assistants" element={<VirtualAssistants />} />
+<Route path="/virtual-assistants" element={<VirtualAssistants />} />
+                <Route path="/agencies/:id" element={<AgencyDetails />} />
               </Routes>
             </main>
           </div>
