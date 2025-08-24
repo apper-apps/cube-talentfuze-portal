@@ -62,8 +62,9 @@ return (
           pauseOnHover
           style={{ zIndex: 9999 }}
         />
-      </div>
+</div>
       </BrowserRouter>
+    </AuthProvider>
   );
 }
 
