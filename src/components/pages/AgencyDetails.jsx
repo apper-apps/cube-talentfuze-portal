@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import checkInService from "@/services/api/checkInService";
 import ApperIcon from "@/components/ApperIcon";
 import Modal from "@/components/molecules/Modal";
 import Card from "@/components/atoms/Card";
@@ -32,11 +33,14 @@ const [agency, setAgency] = useState(null);
   const [isVaAssignModalOpen, setIsVaAssignModalOpen] = useState(false);
   const [unassignedVAs, setUnassignedVAs] = useState([]);
   const [vaAssignLoading, setVaAssignLoading] = useState(false);
-
+  const [activeTab, setActiveTab] = useState('details');
+  const [checkIns, setCheckIns] = useState([]);
+  const [checkInsLoading, setCheckInsLoading] = useState(true);
   useEffect(() => {
     loadAgency();
     loadEmployees();
-    loadVirtualAssistants();
+loadVirtualAssistants();
+    loadCheckIns();
   }, [id]);
 
   const loadEmployees = async () => {
@@ -191,7 +195,19 @@ const [agency, setAgency] = useState(null);
       setLoading(false);
     }
   };
-
+// Load check-ins for agency
+  const loadCheckIns = async () => {
+    try {
+      setCheckInsLoading(true);
+      const data = await checkInService.getByAgencyId(parseInt(id));
+      setCheckIns(data);
+    } catch (err) {
+      console.error('Failed to load check-ins:', err);
+      toast.error('Failed to load check-ins');
+    } finally {
+      setCheckInsLoading(false);
+    }
+  };
   const handleEditAgency = () => {
     setIsEditModalOpen(true);
   };
@@ -250,8 +266,8 @@ const handleBackToList = () => {
     );
   }
 
-  return (
-    <div className="p-6 max-w-4xl mx-auto">
+return (
+    <div className="p-6 max-w-6xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
@@ -276,6 +292,43 @@ const handleBackToList = () => {
           Edit Agency
         </Button>
       </div>
+
+      {/* Tabs */}
+      <div className="mb-8">
+        <div className="border-b border-slate-200">
+          <nav className="-mb-px flex space-x-8">
+            <button
+              onClick={() => setActiveTab('details')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'details'
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <ApperIcon name="Building2" size={16} />
+                Agency Details
+              </div>
+            </button>
+            <button
+              onClick={() => setActiveTab('checkins')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'checkins'
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <ApperIcon name="CheckSquare" size={16} />
+                Check-ins ({checkIns.length})
+              </div>
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      {activeTab === 'details' && (
+        <>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Information */}
@@ -536,8 +589,106 @@ const handleBackToList = () => {
             </div>
           )}
         </Card>
-      </div>
-{/* Edit Modal */}
+</div>
+        </>
+      )}
+
+      {activeTab === 'checkins' && (
+        <div className="space-y-6">
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-slate-900">Daily Check-ins</h3>
+              <div className="text-sm text-slate-600">
+                {checkIns.length} total check-ins
+              </div>
+            </div>
+
+            {checkInsLoading ? (
+              <Loading rows={4} />
+            ) : checkIns.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <ApperIcon name="CheckSquare" size={32} className="text-slate-400" />
+                </div>
+                <p className="text-slate-600 mb-2">No check-ins yet</p>
+                <p className="text-sm text-slate-500">
+                  Virtual assistants' daily check-ins will appear here when submitted.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {checkIns.map((checkIn) => {
+                  const va = virtualAssistants.find(v => v.Id === checkIn.virtualAssistantId);
+                  return (
+                    <div
+                      key={checkIn.Id}
+                      className="border border-slate-200 rounded-lg p-4 hover:bg-slate-50 transition-colors"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
+                            <ApperIcon name="User" size={18} className="text-white" />
+                          </div>
+                          <div>
+                            <div className="font-semibold text-slate-900">
+                              {va ? va.name : 'Unknown VA'}
+                            </div>
+                            <div className="text-sm text-slate-500">
+                              {va ? va.email : 'N/A'}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm font-medium text-slate-900">
+                            {new Date(checkIn.date).toLocaleDateString('en-US', {
+                              weekday: 'short',
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            })}
+                          </div>
+                          <div className="text-sm text-slate-500">
+                            {checkIn.hoursWorked} hours worked
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                        <div>
+                          <label className="block text-xs font-medium text-slate-700 mb-1">
+                            Tasks Completed
+                          </label>
+                          <div className="text-sm text-slate-900">
+                            {checkIn.tasksCompleted || 'No tasks listed'}
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-slate-700 mb-1">
+                            Notes
+                          </label>
+                          <div className="text-sm text-slate-600">
+                            {checkIn.notes || 'No notes provided'}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between text-xs text-slate-500">
+                        <span>Submitted on {new Date(checkIn.submittedAt).toLocaleString()}</span>
+                        <Badge variant="success" className="text-xs">
+                          Submitted
+                        </Badge>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </Card>
+</div>
+      )}
+    </div>
+
+    {/* Edit Modal */}
       <Modal
         isOpen={isEditModalOpen}
         onClose={handleCloseModal}

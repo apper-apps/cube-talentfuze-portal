@@ -1,0 +1,122 @@
+[
+  {
+    "Id": 1,
+    "virtualAssistantId": 1,
+    "agencyId": 1,
+    "date": "2024-01-15",
+    "hoursWorked": 8,
+    "tasksCompleted": "Completed client onboarding documentation, Updated CRM database with new leads, Prepared weekly performance reports",
+    "notes": "Had a productive day focusing on client relations. Managed to exceed daily targets.",
+    "submittedAt": "2024-01-15T17:30:00.000Z"
+  },
+  {
+    "Id": 2,
+    "virtualAssistantId": 2,
+    "agencyId": 1,
+    "date": "2024-01-15",
+    "hoursWorked": 7.5,
+    "tasksCompleted": "Social media content creation for 3 clients, Scheduled posts for the week, Responded to customer inquiries",
+    "notes": "Content calendar is now fully updated through the end of the month. Client feedback has been positive.",
+    "submittedAt": "2024-01-15T18:00:00.000Z"
+  },
+  {
+    "Id": 3,
+    "virtualAssistantId": 3,
+    "agencyId": 2,
+    "date": "2024-01-15",
+    "hoursWorked": 8,
+    "tasksCompleted": "Processed 45 data entries, Quality checked previous entries, Updated database schemas",
+    "notes": "All entries completed with 99.8% accuracy. Identified some process improvements for next week.",
+    "submittedAt": "2024-01-15T16:45:00.000Z"
+  },
+  {
+    "Id": 4,
+    "virtualAssistantId": 1,
+    "agencyId": 1,
+    "date": "2024-01-14",
+    "hoursWorked": 8,
+    "tasksCompleted": "Client consultation calls (4 sessions), Follow-up emails sent, Proposal drafts completed",
+    "notes": "Excellent client meetings today. Two potential new contracts in the pipeline.",
+    "submittedAt": "2024-01-14T17:15:00.000Z"
+  },
+  {
+    "Id": 5,
+    "virtualAssistantId": 4,
+    "agencyId": 3,
+    "date": "2024-01-14",
+    "hoursWorked": 6,
+    "tasksCompleted": "Customer support tickets resolved (12 tickets), Live chat support, Knowledge base updates",
+    "notes": "Handled complex technical issues well. Customer satisfaction scores remain high at 4.8/5.",
+    "submittedAt": "2024-01-14T18:30:00.000Z"
+  },
+  {
+    "Id": 6,
+    "virtualAssistantId": 2,
+    "agencyId": 1,
+    "date": "2024-01-14",
+    "hoursWorked": 7,
+    "tasksCompleted": "Instagram campaigns setup, Facebook ad optimization, Analytics reporting",
+    "notes": "Campaign performance improved by 15% this week. Budget optimization suggestions prepared.",
+    "submittedAt": "2024-01-14T17:45:00.000Z"
+  },
+  {
+    "Id": 7,
+    "virtualAssistantId": 5,
+    "agencyId": 2,
+    "date": "2024-01-14",
+    "hoursWorked": 8,
+    "tasksCompleted": "Financial records reconciliation, Invoice processing, Expense report generation",
+    "notes": "Monthly financial close process completed ahead of schedule. All accounts balanced perfectly.",
+    "submittedAt": "2024-01-14T19:00:00.000Z"
+  },
+  {
+    "Id": 8,
+    "virtualAssistantId": 3,
+    "agencyId": 2,
+    "date": "2024-01-13",
+    "hoursWorked": 8.5,
+    "tasksCompleted": "Data migration project phase 2, System integration testing, Documentation updates",
+    "notes": "Migration proceeding smoothly. No data loss incidents. System performance is optimal.",
+    "submittedAt": "2024-01-13T18:15:00.000Z"
+  },
+  {
+    "Id": 9,
+    "virtualAssistantId": 6,
+    "agencyId": 3,
+    "date": "2024-01-13",
+    "hoursWorked": 7,
+    "tasksCompleted": "Email template designs, Newsletter creation, Brand guideline updates",
+    "notes": "New email designs showing 23% higher open rates. Client is very pleased with results.",
+    "submittedAt": "2024-01-13T16:30:00.000Z"
+  },
+  {
+    "Id": 10,
+    "virtualAssistantId": 1,
+    "agencyId": 1,
+    "date": "2024-01-13",
+    "hoursWorked": 8,
+    "tasksCompleted": "Team coordination meeting, Project timeline updates, Resource allocation planning",
+    "notes": "Team alignment achieved for Q1 objectives. All project milestones are on track.",
+    "submittedAt": "2024-01-13T17:00:00.000Z"
+  },
+  {
+    "Id": 11,
+    "virtualAssistantId": 4,
+    "agencyId": 3,
+    "date": "2024-01-12",
+    "hoursWorked": 7.5,
+    "tasksCompleted": "Technical documentation writing, API testing, Bug report analysis",
+    "notes": "Completed comprehensive API documentation. Identified 3 minor bugs that were resolved.",
+    "submittedAt": "2024-01-12T18:45:00.000Z"
+  },
+  {
+    "Id": 12,
+    "virtualAssistantId": 2,
+    "agencyId": 1,
+    "date": "2024-01-12",
+    "hoursWorked": 6.5,
+    "tasksCompleted": "Content calendar planning, Blog post writing, SEO optimization",
+    "notes": "Published 2 blog posts with strong SEO scores. Organic traffic increased by 12% this week.",
+    "submittedAt": "2024-01-12T17:30:00.000Z"
+  }
+]

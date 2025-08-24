@@ -3,10 +3,11 @@ import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
 
 const Sidebar = ({ isMobileOpen, closeMobileSidebar }) => {
-  const navItems = [
+const navItems = [
     { to: "/", label: "Dashboard", icon: "LayoutDashboard" },
     { to: "/agencies", label: "Agencies", icon: "Building2" },
-    { to: "/virtual-assistants", label: "Virtual Assistants", icon: "Users" }
+    { to: "/virtual-assistants", label: "Virtual Assistants", icon: "Users" },
+    { to: "/check-ins", label: "Check-ins", icon: "CheckSquare" }
   ];
 
   const SidebarContent = () => (

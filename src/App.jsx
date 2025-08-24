@@ -6,6 +6,7 @@ import Sidebar from "@/components/organisms/Sidebar";
 import Dashboard from "@/components/pages/Dashboard";
 import Agencies from "@/components/pages/Agencies";
 import VirtualAssistants from "@/components/pages/VirtualAssistants";
+import CheckIns from "@/components/pages/CheckIns";
 import AgencyDetails from "@/components/pages/AgencyDetails";
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/agencies" element={<Agencies />} />
 <Route path="/virtual-assistants" element={<VirtualAssistants />} />
+                <Route path="/check-ins" element={<CheckIns />} />
                 <Route path="/agencies/:id" element={<AgencyDetails />} />
               </Routes>
             </main>
